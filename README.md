@@ -1,5 +1,5 @@
-# jfx-minions
-Java FX Minions game
+# jfx-fractal
+Java FX Fractal Generator
 
 ### Project JVM Flags
  - See https://github.com/controlsfx/controlsfx/wiki/Using-ControlsFX-with-JDK-9-and-above
@@ -20,9 +20,3 @@ The following Maven command was used to generate the initial structure of this p
 -DartifactId=sample \
 -Dversion=1.0.0 \
 -Djavafx-version=15.0.1`
-   
-### Latest Project Screenshot2 
-- 02/19/2021 ![Screenshot](img4.png) 
-- 02/16/2021 ![Screenshot](img3.png) 
-- 02/16/2021 ![Screenshot](img2.png)
-- 02/15/2021 ![Screenshot](img.png)
