@@ -15,16 +15,20 @@ import org.jetbrains.annotations.NotNull;
 import java.nio.ByteBuffer;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
  * JavaFX App
  */
 public class App extends Application {
+	public static final double SCROLL_ZOOM_FACTOR = 1.2;
 	public static int WIDTH = 640*2;
 	public static int HEIGHT = 480*2;
 	public static double X_LOWER = -2.5;
@@ -145,12 +149,9 @@ public class App extends Application {
 		public Map<Long, Long> getIterations() {
 			Instant very_start = Instant.now();
 			Instant start = Instant.now();
-			Map<Long, Long> iterations = new ConcurrentHashMap<>();
-			IntStream.range(0,height).parallel().forEach(y -> {
-				IntStream.range(0, width).parallel().forEach(x -> {
-					iterations.put(pixels[x][y].iterations, 0L);
-				});
-			});
+			Map<Long, Long> iterations = new ConcurrentHashMap<>(16, 0.9f, 64);
+			final Set<Long> collectedIterations = Arrays.stream(pixels).parallel().map(p -> Arrays.stream(p).parallel().map(pp -> pp.iterations).distinct().collect(Collectors.toList())).flatMap(ppp -> ppp.stream().parallel().distinct()).collect(Collectors.toSet());
+			collectedIterations.forEach(i -> iterations.put(i, 0L));
 
 			System.out.println("\tZero HashMap: " + Duration.between(start, Instant.now()).toMillis() + "ms");
 			start = Instant.now();
@@ -261,15 +262,15 @@ public class App extends Application {
 		return event -> {
 			double delta = event.getDeltaY();
 			if(delta > 0) {
-				X_LOWER *= 1.05;
-				X_UPPER *= 1.05;
-				Y_LOWER *= 1.05;
-				Y_UPPER *= 1.05;
+				X_LOWER *= SCROLL_ZOOM_FACTOR;
+				X_UPPER *= SCROLL_ZOOM_FACTOR;
+				Y_LOWER *= SCROLL_ZOOM_FACTOR;
+				Y_UPPER *= SCROLL_ZOOM_FACTOR;
 			} else {
-				X_LOWER /= 1.05;
-				X_UPPER /= 1.05;
-				Y_LOWER /= 1.05;
-				Y_UPPER /= 1.05;
+				X_LOWER /= SCROLL_ZOOM_FACTOR;
+				X_UPPER /= SCROLL_ZOOM_FACTOR;
+				Y_LOWER /= SCROLL_ZOOM_FACTOR;
+				Y_UPPER /= SCROLL_ZOOM_FACTOR;
 			}
 			System.out.println(String.format("X: [%f, %f], Y: [%f, %f]", X_LOWER, X_UPPER, Y_LOWER, Y_UPPER));
 			renderFractal(canvas);
