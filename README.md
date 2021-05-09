@@ -22,7 +22,7 @@ The following Maven command was used to generate the initial structure of this p
 -Djavafx-version=15.0.1`
 
 ### Latest Project Screenshot
-- 02/19/2021 ![Screenshot](Capture.png) 
+- 02/19/2021 ![Screenshot](Capture.PNG) 
 Log Output for this image:
   
 - `Initializing...[W: 3849][H: 2123][X: -2.267574-0.957420][Y: -0.907029-0.907029][352ms]`
