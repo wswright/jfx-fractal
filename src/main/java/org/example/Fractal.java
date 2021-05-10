@@ -42,8 +42,11 @@ public class Fractal {
 		}
 	}
 
-	private byte[] getRandomColor() {
+	public Fractal(int width, int height) {
+		this(width,height, App.X_LOWER, App.X_UPPER, App.Y_LOWER, App.Y_UPPER);
+	}
 
+	private byte[] getRandomColor() {
 		final byte[] bytes = new byte[3];
 		randomSource.nextBytes(bytes);
 		return bytes;
@@ -81,10 +84,6 @@ public class Fractal {
 		System.out.println("\tAssign Colors to pixels: " + Duration.between(start, Instant.now()).toMillis() + "ms");
 		System.out.println("\tTOTAL TIME: " + Duration.between(very_start, Instant.now()).toMillis() + "ms");
 		return iterations;
-	}
-
-	public Fractal(int width, int height) {
-		this(width,height, App.X_LOWER, App.X_UPPER, App.Y_LOWER, App.Y_UPPER);
 	}
 
 	/**
