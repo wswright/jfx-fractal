@@ -16,14 +16,9 @@ import org.jetbrains.annotations.NotNull;
 import java.nio.ByteBuffer;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
  * JavaFX App
@@ -37,10 +32,8 @@ public class App extends Application {
 	public static double X_UPPER = 1.0555555;
 	public static double Y_LOWER = -1;
 	public static double Y_UPPER = 1;
-	public static final int MAX_ITERATIONS = 128;
-	public static final int ESCAPE_LIMIT = 12345;
+
 	private Stage theStage;
-	public static AtomicLong totalIters = new AtomicLong(0);
 	private Canvas canvas = new Canvas();
 	public static Random randomSource = new Random();
 
@@ -103,13 +96,13 @@ public class App extends Application {
 		this.theStage.setTitle(String.format("Initializing...[W: %d][H: %d][X: %f-%f][Y: %f-%f]", WIDTH, HEIGHT, X_LOWER, X_UPPER, Y_LOWER, Y_UPPER));
 
 		byte[] imageData = new byte[WIDTH*HEIGHT*3];
-		totalIters = new AtomicLong(0);
+		Fractal.totalIters = new AtomicLong(0);
 		final PixelWriter pw = canvas.getGraphicsContext2D().getPixelWriter();
 		PixelFormat<ByteBuffer> pixelFormat = PixelFormat.getByteRgbInstance();
-		Fractal fractal = new Fractal(WIDTH, HEIGHT);
+		Fractal fractal = new Fractal(WIDTH, HEIGHT, X_LOWER, X_UPPER, Y_LOWER, Y_UPPER);
 		System.out.printf("[%dms]%n", Duration.between(start, Instant.now()).toMillis());
 		start = Instant.now();
-		System.out.printf("Calculating...[Threads: %d][Escape: %d][MaxIterations: %d]", Runtime.getRuntime().availableProcessors(), ESCAPE_LIMIT, MAX_ITERATIONS);
+		System.out.printf("Calculating...[Threads: %d][Escape: %d][MaxIterations: %d]", Runtime.getRuntime().availableProcessors(), Fractal.ESCAPE_LIMIT, Fractal.MAX_ITERATIONS);
 		this.theStage.setTitle(String.format("Calculating...[Threads: %d]", Runtime.getRuntime().availableProcessors()));
 
 		fractal.calculate();
@@ -143,9 +136,9 @@ public class App extends Application {
 
 		pw.setPixels(0, 0, WIDTH, HEIGHT, pixelFormat, imageData, 0, WIDTH*3);
 		System.out.printf("[%dms]%n", Duration.between(start, Instant.now()).toMillis());
-		System.out.println("Total Iterations: " + totalIters.get());
-		System.out.println("Iters/Pixel: " + totalIters.get() / (1.0f*WIDTH * HEIGHT));
-		this.theStage.setTitle("Total Iterations: " + totalIters.get());
+		System.out.println("Total Iterations: " + Fractal.totalIters.get());
+		System.out.println("Iters/Pixel: " + Fractal.totalIters.get() / (1.0f*WIDTH * HEIGHT));
+		this.theStage.setTitle("Total Iterations: " + Fractal.totalIters.get());
 		System.out.printf("TOTAL DURATION: [%dms]%n", Duration.between(veryStart, Instant.now()).toMillis());
 		fractal = null;
 
@@ -155,108 +148,7 @@ public class App extends Application {
 		System.out.println("+------------------------------------------------------------------------------------------+");
 	}
 
-	public static class Fractal {
-		public static Map<Long, byte[]> colors = new ConcurrentHashMap<>();
-		public FractalPixel[][] pixels;
-		public int width;
-		public int height;
-		public double x_lower, x_upper, y_lower, y_upper;
-		public AtomicLong pixelsCalculated = new AtomicLong(0);
-		public IFractalEquation currentEquation = new MandelBrotFractalEquation();
 
-		private byte[] getRandomColor() {
-			final byte[] bytes = new byte[3];
-			randomSource.nextBytes(bytes);
-			return bytes;
-		}
-
-		public Map<Long, Long> getIterations() {
-			Instant very_start = Instant.now();
-			Instant start = Instant.now();
-			Map<Long, Long> iterations = new ConcurrentHashMap<>(16, 0.9f, 64);
-			final Set<Long> collectedIterations = Arrays.stream(pixels).parallel().map(p -> Arrays.stream(p).parallel().map(pp -> pp.iterations).distinct().collect(Collectors.toList())).flatMap(ppp -> ppp.stream().parallel().distinct()).collect(Collectors.toSet());
-			collectedIterations.forEach(i -> iterations.put(i, 0L));
-
-			System.out.println("\tZero HashMap: " + Duration.between(start, Instant.now()).toMillis() + "ms");
-			start = Instant.now();
-
-			IntStream.range(0,height).parallel().forEach(y -> {
-				IntStream.range(0, width).parallel().forEach(x -> {
-					iterations.put(pixels[x][y].iterations, iterations.get(pixels[x][y].iterations)+1L);
-				});
-			});
-
-			System.out.println("\tPopulate HashMap: " + Duration.between(start, Instant.now()).toMillis() + "ms");
-			start = Instant.now();
-			iterations.keySet().parallelStream().forEach(i -> colors.put(i, getRandomColor()));
-
-			System.out.println("\tGenerate & Store Colors: " + Duration.between(start, Instant.now()).toMillis() + "ms");
-			start = Instant.now();
-
-			IntStream.range(0,height).parallel().forEach(y -> {
-				IntStream.range(0, width).parallel().forEach(x -> {
-					pixels[x][y].color = colors.get(pixels[x][y].iterations);
-				});
-			});
-
-			System.out.println("\tAssign Colors to pixels: " + Duration.between(start, Instant.now()).toMillis() + "ms");
-			System.out.println("\tTOTAL TIME: " + Duration.between(very_start, Instant.now()).toMillis() + "ms");
-			return iterations;
-		}
-
-		public Fractal(int width, int height) {
-			this.width = width;
-			this.height = height;
-			this.x_lower = X_LOWER;
-			this.x_upper = X_UPPER;
-			this.y_lower = Y_LOWER;
-			this.y_upper = Y_UPPER;
-			pixels = new FractalPixel[this.width][this.height];
-			for(int y=0; y<height; y++) {
-				for(int x=0; x<width; x++) {
-					pixels[x][y] = new FractalPixel(x, y);
-				}
-			}
-		}
-
-		/**
-		 * The main pixel calculation happens here.
-		 * @param cr
-		 * @param ci
-		 * @param max_it
-		 * @return
-		 */
-		public int iterations(double cr, double ci, int max_it) {
-			Complex z = new Complex(0,0);
-			final Complex c = new Complex(cr, ci);
-			int i=0;
-			for(; i<max_it; i++) {
-				z = currentEquation.calculateFractalIteration(z, c);
-
-				if(z.abs() > ESCAPE_LIMIT)
-					break;
-			}
-			totalIters.addAndGet(i);
-			return i;
-		}
-
-		public void calculate() {
-			pixelsCalculated.set(0);
-			IntStream.range(0, height).parallel().forEach(y -> {
-				IntStream.range(0, width).parallel().forEach(x -> {
-					calculatePixel(x,y);
-				});
-			});
-		}
-
-		private void calculatePixel(int x, int y) {
-			pixels[x][y].iterations = iterations(linmap(x, 0, width, X_LOWER, X_UPPER), linmap(y, 0, height, Y_LOWER, Y_UPPER), MAX_ITERATIONS);
-			pixels[x][y].color[0] = (byte) (pixels[x][y].iterations % 255);
-			pixels[x][y].color[1] = (byte) (pixels[x][y].iterations % 255);
-			pixels[x][y].color[2] = (byte) (pixels[x][y].iterations % 255);
-			pixelsCalculated.incrementAndGet();
-		}
-	}
 
 	public static class FractalPixel {
 		public int x;
@@ -269,10 +161,6 @@ public class App extends Application {
 			this.x = x;
 			this.y = y;
 		}
-	}
-
-	private static double linmap(double val, double lower1, double upper1, double lower2, double upper2) {
-		return ((val - lower1) / (upper1 - lower1)) * (upper2 - lower2) + lower2;
 	}
 
 
