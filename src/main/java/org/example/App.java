@@ -8,6 +8,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
 import javafx.scene.image.PixelFormat;
 import javafx.scene.image.PixelWriter;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.stage.Stage;
 import org.jetbrains.annotations.NotNull;
@@ -29,14 +30,15 @@ import java.util.stream.IntStream;
  */
 public class App extends Application {
 	public static final double SCROLL_ZOOM_FACTOR = 1.2;
+	private static final double PAN_AMOUNT = 0.05;
 	public static int WIDTH = 640*2;
 	public static int HEIGHT = 480*2;
 	public static double X_LOWER = -2.5;
 	public static double X_UPPER = 1.0555555;
 	public static double Y_LOWER = -1;
 	public static double Y_UPPER = 1;
-	public static final int MAX_ITERATIONS = 4096;
-	public static final int ESCAPE_LIMIT = 123456789;
+	public static final int MAX_ITERATIONS = 128;
+	public static final int ESCAPE_LIMIT = 12345;
 	private Stage theStage;
 	public static AtomicLong totalIters = new AtomicLong(0);
 	private Canvas canvas = new Canvas();
@@ -61,6 +63,7 @@ public class App extends Application {
 		var scene = new Scene(new Group(canvas, btnGo));
 		stage.setScene(scene);
 		stage.addEventHandler(ScrollEvent.SCROLL, getScrollEventEventHandler());
+		stage.addEventHandler(KeyEvent.KEY_PRESSED, getKeyPressedEventHandler());
 		stage.show();
 		stage.widthProperty().addListener((observable, oldValue, newValue) -> {
 			WIDTH = newValue.intValue();
@@ -70,6 +73,27 @@ public class App extends Application {
 			HEIGHT = newValue.intValue();
 			canvas.setHeight(HEIGHT);
 		});
+	}
+
+	private EventHandler<KeyEvent> getKeyPressedEventHandler() {
+		return event -> {
+			switch (event.getCode()) {
+				case W -> panWindow(0, PAN_AMOUNT);
+				case S -> panWindow(0, -PAN_AMOUNT);
+				case A -> panWindow(-PAN_AMOUNT, 0);
+				case D -> panWindow(PAN_AMOUNT, 0);
+				default -> {}
+			}
+		};
+	}
+
+	private void panWindow(double panX, double panY) {
+		X_LOWER += panX;
+		X_UPPER += panX;
+		Y_LOWER += panY;
+		Y_UPPER += panY;
+		System.out.printf("Panning! [X: %f-%f][Y: %f-%f]%n", X_LOWER, X_UPPER, Y_LOWER, Y_UPPER);
+		renderFractal(canvas);
 	}
 
 	private void renderFractal(Canvas canvas) {
