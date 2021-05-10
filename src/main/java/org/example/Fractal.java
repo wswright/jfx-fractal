@@ -10,6 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class Fractal {
 	public static Map<Long, byte[]> colors = new ConcurrentHashMap<>();
@@ -25,7 +26,7 @@ public class Fractal {
 	public double Y_UPPER;
 	public double centerX, centerY = 0;
 	public static final int MAX_ITERATIONS = 64;
-	public static final int ESCAPE_LIMIT = 1000;
+	public static final int ESCAPE_LIMIT = 10000;
 	public static AtomicLong totalIters = new AtomicLong(0);
 
 	public Fractal(int width, int height, double xLower, double xUpper, double yLower, double yUpper) {
@@ -59,7 +60,9 @@ public class Fractal {
 		Instant very_start = Instant.now();
 		Instant start = Instant.now();
 		Map<Long, Long> iterations = new ConcurrentHashMap<>(16, 0.9f, 64);
-		final Set<Long> collectedIterations = Arrays.stream(pixels).parallel().map(p -> Arrays.stream(p).parallel().map(pp -> pp.iterations).distinct().collect(Collectors.toList())).flatMap(ppp -> ppp.stream().parallel().distinct()).collect(Collectors.toSet());
+		final Set<Long> collectedIterations = Arrays.stream(pixels).parallel().map(p -> Arrays.stream(p).parallel().map(pp -> pp.iterations)
+				.distinct()
+				.collect(Collectors.toList())).flatMap(ppp -> Stream.concat(ppp.stream().parallel().distinct(), colors.keySet().parallelStream())).collect(Collectors.toSet());
 		collectedIterations.forEach(i -> iterations.put(i, 0L));
 
 		System.out.println("\tZero HashMap: " + Duration.between(start, Instant.now()).toMillis() + "ms");
@@ -73,7 +76,7 @@ public class Fractal {
 
 		System.out.println("\tPopulate HashMap: " + Duration.between(start, Instant.now()).toMillis() + "ms");
 		start = Instant.now();
-		iterations.keySet().parallelStream().forEach(i -> colors.put(i, getRandomColor()));
+		iterations.keySet().parallelStream().forEach(i -> colors.putIfAbsent(i, getRandomColor()));
 
 		System.out.println("\tGenerate & Store Colors: " + Duration.between(start, Instant.now()).toMillis() + "ms");
 		start = Instant.now();
