@@ -36,6 +36,7 @@ public class App extends Application {
 	private Stage theStage;
 	private Canvas canvas = new Canvas();
 	public static Random randomSource = new Random();
+	private double CENTER_X, CENTER_Y;
 
 
 	public static void main(String[] args) {
@@ -81,10 +82,16 @@ public class App extends Application {
 	}
 
 	private void panWindow(double panX, double panY) {
-		X_LOWER += panX;
-		X_UPPER += panX;
-		Y_LOWER += panY;
-		Y_UPPER += panY;
+		double xoffset = (X_UPPER - X_LOWER) * (panX);
+		double yoffset = (Y_UPPER - Y_LOWER) * (panY);
+
+
+		X_LOWER += xoffset;
+		X_UPPER += xoffset;
+		Y_LOWER += yoffset;
+		Y_UPPER += yoffset;
+		CENTER_X = (X_LOWER + X_UPPER) / 2.0;
+		CENTER_Y = (Y_LOWER + Y_UPPER) / 2.0;
 		System.out.printf("Panning! [X: %f-%f][Y: %f-%f]%n", X_LOWER, X_UPPER, Y_LOWER, Y_UPPER);
 		renderFractal(canvas);
 	}
@@ -100,6 +107,8 @@ public class App extends Application {
 		final PixelWriter pw = canvas.getGraphicsContext2D().getPixelWriter();
 		PixelFormat<ByteBuffer> pixelFormat = PixelFormat.getByteRgbInstance();
 		Fractal fractal = new Fractal(WIDTH, HEIGHT, X_LOWER, X_UPPER, Y_LOWER, Y_UPPER);
+		CENTER_X = (X_LOWER + X_UPPER) / 2.0;
+		CENTER_Y = (Y_LOWER + Y_UPPER) / 2.0;
 		System.out.printf("[%dms]%n", Duration.between(start, Instant.now()).toMillis());
 		start = Instant.now();
 		System.out.printf("Calculating...[Threads: %d][Escape: %d][MaxIterations: %d]", Runtime.getRuntime().availableProcessors(), Fractal.ESCAPE_LIMIT, Fractal.MAX_ITERATIONS);
@@ -163,19 +172,25 @@ public class App extends Application {
 	@NotNull
 	private EventHandler<ScrollEvent> getScrollEventEventHandler() {
 		return event -> {
+			System.out.println(String.format("BEFORE - X: [%f, %f], Y: [%f, %f]", X_LOWER, X_UPPER, Y_LOWER, Y_UPPER));
 			double delta = event.getDeltaY();
+			double curWidth = X_UPPER - X_LOWER;
+			double curHeight = Y_UPPER - Y_LOWER;
+			double x_offset, y_offset;
+
 			if(delta > 0) {
-				X_LOWER *= SCROLL_ZOOM_FACTOR;
-				X_UPPER *= SCROLL_ZOOM_FACTOR;
-				Y_LOWER *= SCROLL_ZOOM_FACTOR;
-				Y_UPPER *= SCROLL_ZOOM_FACTOR;
+				x_offset = (curWidth * SCROLL_ZOOM_FACTOR) / 2.0;
+				y_offset = (curHeight * SCROLL_ZOOM_FACTOR) / 2.0;
 			} else {
-				X_LOWER /= SCROLL_ZOOM_FACTOR;
-				X_UPPER /= SCROLL_ZOOM_FACTOR;
-				Y_LOWER /= SCROLL_ZOOM_FACTOR;
-				Y_UPPER /= SCROLL_ZOOM_FACTOR;
+				x_offset = (curWidth / SCROLL_ZOOM_FACTOR) / 2.0;
+				y_offset = (curHeight / SCROLL_ZOOM_FACTOR) / 2.0;
 			}
-			System.out.println(String.format("X: [%f, %f], Y: [%f, %f]", X_LOWER, X_UPPER, Y_LOWER, Y_UPPER));
+			X_LOWER = CENTER_X - x_offset;
+			X_UPPER = CENTER_X + x_offset;
+			Y_LOWER = CENTER_Y - y_offset;
+			Y_UPPER = CENTER_Y + y_offset;
+
+			System.out.println(String.format("AFTER - X: [%f, %f], Y: [%f, %f]", X_LOWER, X_UPPER, Y_LOWER, Y_UPPER));
 			renderFractal(canvas);
 		};
 	}

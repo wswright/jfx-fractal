@@ -23,6 +23,7 @@ public class Fractal {
 	public double X_UPPER = 1.0555555;
 	public double Y_LOWER = -1;
 	public double Y_UPPER = 1;
+	public double centerX, centerY = 0;
 	public static final int MAX_ITERATIONS = 64;
 	public static final int ESCAPE_LIMIT = 1000;
 	public static AtomicLong totalIters = new AtomicLong(0);
@@ -34,6 +35,8 @@ public class Fractal {
 		this.X_UPPER = xUpper;
 		this.Y_LOWER = yLower;
 		this.Y_UPPER = yUpper;
+		centerX = (X_UPPER+X_LOWER) / 2.0;
+		centerY = (Y_UPPER+Y_LOWER) / 2.0;
 		pixels = new FractalPixel[this.width][this.height];
 		for(int y=0; y<height; y++) {
 			for(int x=0; x<width; x++) {
