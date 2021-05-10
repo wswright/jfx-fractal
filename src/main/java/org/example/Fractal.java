@@ -13,7 +13,7 @@ import java.util.stream.IntStream;
 
 public class Fractal {
 	public static Map<Long, byte[]> colors = new ConcurrentHashMap<>();
-	public App.FractalPixel[][] pixels;
+	public FractalPixel[][] pixels;
 	public int width;
 	public int height;
 	public AtomicLong pixelsCalculated = new AtomicLong(0);
@@ -34,10 +34,10 @@ public class Fractal {
 		this.X_UPPER = xUpper;
 		this.Y_LOWER = yLower;
 		this.Y_UPPER = yUpper;
-		pixels = new App.FractalPixel[this.width][this.height];
+		pixels = new FractalPixel[this.width][this.height];
 		for(int y=0; y<height; y++) {
 			for(int x=0; x<width; x++) {
-				pixels[x][y] = new App.FractalPixel(x, y);
+				pixels[x][y] = new FractalPixel(x, y);
 			}
 		}
 	}
@@ -126,5 +126,18 @@ public class Fractal {
 
 	private static double linmap(double val, double lower1, double upper1, double lower2, double upper2) {
 		return ((val - lower1) / (upper1 - lower1)) * (upper2 - lower2) + lower2;
+	}
+
+	public byte[] getImageData(byte[] imageData) {
+		int i=0;
+		for(int y=0; y<this.height; y++) {
+			for (int x = 0; x < width; x++) {
+				imageData[i] = pixels[x][y].color[0];
+				imageData[i+1] = pixels[x][y].color[1];
+				imageData[i+2] = pixels[x][y].color[2];
+				i+=3;
+			}
+		}
+		return imageData;
 	}
 }

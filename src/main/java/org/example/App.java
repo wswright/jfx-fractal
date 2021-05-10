@@ -71,8 +71,8 @@ public class App extends Application {
 	private EventHandler<KeyEvent> getKeyPressedEventHandler() {
 		return event -> {
 			switch (event.getCode()) {
-				case W -> panWindow(0, PAN_AMOUNT);
-				case S -> panWindow(0, -PAN_AMOUNT);
+				case W -> panWindow(0, -PAN_AMOUNT);
+				case S -> panWindow(0, PAN_AMOUNT);
 				case A -> panWindow(-PAN_AMOUNT, 0);
 				case D -> panWindow(PAN_AMOUNT, 0);
 				default -> {}
@@ -120,6 +120,8 @@ public class App extends Application {
 		System.out.print("Buffering...");
 		this.theStage.setTitle("Buffering...");
 
+		imageData = fractal.getImageData(imageData);
+
 		for(int y=0; y<HEIGHT; y++) {
 				for (int x = 0; x < WIDTH; x++) {
 					imageData[i] = fractal.pixels[x][y].color[0];
@@ -150,18 +152,7 @@ public class App extends Application {
 
 
 
-	public static class FractalPixel {
-		public int x;
-		public int y;
-		public long iterations;
-		public byte[] color = new byte[3];
 
-
-		public FractalPixel(int x, int y) {
-			this.x = x;
-			this.y = y;
-		}
-	}
 
 
 	/**
