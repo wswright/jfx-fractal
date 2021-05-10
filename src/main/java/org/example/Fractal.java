@@ -19,10 +19,10 @@ public class Fractal {
 	public AtomicLong pixelsCalculated = new AtomicLong(0);
 	public IFractalEquation currentEquation = new MandelBrotFractalEquation();
 	Random randomSource = new Random();
-	public double X_LOWER = -2.5;
-	public double X_UPPER = 1.0555555;
-	public double Y_LOWER = -1;
-	public double Y_UPPER = 1;
+	public double X_LOWER;
+	public double X_UPPER;
+	public double Y_LOWER;
+	public double Y_UPPER;
 	public double centerX, centerY = 0;
 	public static final int MAX_ITERATIONS = 64;
 	public static final int ESCAPE_LIMIT = 1000;

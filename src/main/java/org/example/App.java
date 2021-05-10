@@ -17,7 +17,6 @@ import java.nio.ByteBuffer;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -35,7 +34,6 @@ public class App extends Application {
 
 	private Stage theStage;
 	private Canvas canvas = new Canvas();
-	public static Random randomSource = new Random();
 	private double CENTER_X, CENTER_Y;
 
 
@@ -179,11 +177,11 @@ public class App extends Application {
 			double x_offset, y_offset;
 
 			if(delta > 0) {
-				x_offset = (curWidth * SCROLL_ZOOM_FACTOR) / 2.0;
-				y_offset = (curHeight * SCROLL_ZOOM_FACTOR) / 2.0;
-			} else {
 				x_offset = (curWidth / SCROLL_ZOOM_FACTOR) / 2.0;
 				y_offset = (curHeight / SCROLL_ZOOM_FACTOR) / 2.0;
+			} else {
+				x_offset = (curWidth * SCROLL_ZOOM_FACTOR) / 2.0;
+				y_offset = (curHeight * SCROLL_ZOOM_FACTOR) / 2.0;
 			}
 			X_LOWER = CENTER_X - x_offset;
 			X_UPPER = CENTER_X + x_offset;
