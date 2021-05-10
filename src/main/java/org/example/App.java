@@ -150,7 +150,7 @@ public class App extends Application {
 		System.out.println("Total Iterations: " + Fractal.totalIters.get());
 		System.out.println("Iters/Pixel: " + Fractal.totalIters.get() / (1.0f*WIDTH * HEIGHT));
 		this.theStage.setTitle("Total Iterations: " + Fractal.totalIters.get());
-		System.out.printf("TOTAL DURATION: [%dms]%n", Duration.between(veryStart, Instant.now()).toMillis());
+		System.out.printf("Total Duration: [%dms]%n", Duration.between(veryStart, Instant.now()).toMillis());
 		fractal = null;
 
 		//Only Hints, nothing more
@@ -172,7 +172,7 @@ public class App extends Application {
 	@NotNull
 	private EventHandler<ScrollEvent> getScrollEventEventHandler() {
 		return event -> {
-			System.out.println(String.format("BEFORE - X: [%f, %f], Y: [%f, %f]", X_LOWER, X_UPPER, Y_LOWER, Y_UPPER));
+			System.out.println(String.format("Zooming... BEFORE - X: [%f, %f], Y: [%f, %f]", X_LOWER, X_UPPER, Y_LOWER, Y_UPPER));
 			double delta = event.getDeltaY();
 			double curWidth = X_UPPER - X_LOWER;
 			double curHeight = Y_UPPER - Y_LOWER;
@@ -190,7 +190,7 @@ public class App extends Application {
 			Y_LOWER = CENTER_Y - y_offset;
 			Y_UPPER = CENTER_Y + y_offset;
 
-			System.out.println(String.format("AFTER - X: [%f, %f], Y: [%f, %f]", X_LOWER, X_UPPER, Y_LOWER, Y_UPPER));
+			System.out.println(String.format("Zooming... AFTER - X: [%f, %f], Y: [%f, %f]", X_LOWER, X_UPPER, Y_LOWER, Y_UPPER));
 			renderFractal(canvas);
 		};
 	}
