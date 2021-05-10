@@ -24,14 +24,13 @@ public class FractalRenderer {
 	public double CENTER_Y;
 
 	void panFractal(double panX, double panY) {
-		double xoffset = (X_UPPER - X_LOWER) * (panX);
-		double yoffset = (Y_UPPER - Y_LOWER) * (panY);
+		double xOffset = (X_UPPER - X_LOWER) * (panX);
+		double yOffset = (Y_UPPER - Y_LOWER) * (panY);
 
-
-		X_LOWER += xoffset;
-		X_UPPER += xoffset;
-		Y_LOWER += yoffset;
-		Y_UPPER += yoffset;
+		X_LOWER += xOffset;
+		X_UPPER += xOffset;
+		Y_LOWER += yOffset;
+		Y_UPPER += yOffset;
 		CENTER_X = (X_LOWER + X_UPPER) / 2.0;
 		CENTER_Y = (Y_LOWER + Y_UPPER) / 2.0;
 		System.out.printf("Panning! [X: %f-%f][Y: %f-%f]%n", X_LOWER, X_UPPER, Y_LOWER, Y_UPPER);

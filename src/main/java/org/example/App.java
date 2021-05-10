@@ -11,11 +11,7 @@ import javafx.scene.input.ScrollEvent;
 import javafx.stage.Stage;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * JavaFX App
- */
 public class App extends Application {
-	public static final double SCROLL_ZOOM_FACTOR = 1.2;
 	private static final double PAN_AMOUNT = 0.05;
 	public static int WIDTH = 640*2;
 	public static int HEIGHT = 480*2;
@@ -26,8 +22,7 @@ public class App extends Application {
 
 	private static Stage theStage;
 	private Canvas canvas = new Canvas();
-	private double CENTER_X, CENTER_Y;
-	private FractalRenderer fractalRenderer = new FractalRenderer();
+	private final FractalRenderer fractalRenderer = new FractalRenderer();
 
 
 	public static void main(String[] args) {
@@ -76,24 +71,10 @@ public class App extends Application {
 		};
 	}
 
-
-
-
-
-
-
-
-
-
-	/**
-	 * Gets the onScroll event handler. This is used to respond to scroll events and move the camera.
-	 * @implNote  Also sets the label's text property to display the camera's coordinates.
-	 * @return Returns a {@link EventHandler<ScrollEvent>}.
-	 */
 	@NotNull
 	private EventHandler<ScrollEvent> getScrollEventEventHandler() {
 		return event -> {
-			System.out.println(String.format("Zooming... BEFORE - X: [%f, %f], Y: [%f, %f]", FractalRenderer.X_LOWER, FractalRenderer.X_UPPER, FractalRenderer.Y_LOWER, FractalRenderer.Y_UPPER));
+			System.out.printf("Zooming... BEFORE - X: [%f, %f], Y: [%f, %f]%n", FractalRenderer.X_LOWER, FractalRenderer.X_UPPER, FractalRenderer.Y_LOWER, FractalRenderer.Y_UPPER);
 			double delta = event.getDeltaY();
 			double curWidth = FractalRenderer.X_UPPER - FractalRenderer.X_LOWER;
 			double curHeight = FractalRenderer.Y_UPPER - FractalRenderer.Y_LOWER;
@@ -111,7 +92,7 @@ public class App extends Application {
 			FractalRenderer.Y_LOWER = fractalRenderer.CENTER_Y - y_offset;
 			FractalRenderer.Y_UPPER = fractalRenderer.CENTER_Y + y_offset;
 
-			System.out.println(String.format("Zooming... AFTER - X: [%f, %f], Y: [%f, %f]", FractalRenderer.X_LOWER, FractalRenderer.X_UPPER, FractalRenderer.Y_LOWER, FractalRenderer.Y_UPPER));
+			System.out.printf("Zooming... AFTER - X: [%f, %f], Y: [%f, %f]%n", FractalRenderer.X_LOWER, FractalRenderer.X_UPPER, FractalRenderer.Y_LOWER, FractalRenderer.Y_UPPER);
 			fractalRenderer.renderFractal();
 		};
 	}
