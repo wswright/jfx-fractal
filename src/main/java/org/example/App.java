@@ -38,6 +38,8 @@ public class App extends Application {
 		theStage = stage;
 
 		this.canvas = new Canvas(WIDTH, HEIGHT);
+		FractalRenderer.WIDTH = WIDTH;
+		FractalRenderer.HEIGHT = HEIGHT;
 		fractalRenderer.setCanvas(canvas);
 		final Button btnGo = new Button("GO!");
 		btnGo.setOnAction(event -> {
@@ -51,15 +53,13 @@ public class App extends Application {
 		stage.show();
 		stage.widthProperty().addListener((observable, oldValue, newValue) -> {
 			WIDTH = newValue.intValue();
-			FractalRenderer.WIDTH = WIDTH;
 			canvas.setWidth(WIDTH);
-			fractalRenderer.calculateChunkSize();
+			fractalRenderer.setWidth(WIDTH);
 		});
 		stage.heightProperty().addListener((observable, oldValue, newValue) -> {
 			HEIGHT = newValue.intValue();
-			FractalRenderer.HEIGHT = HEIGHT;
 			canvas.setHeight(HEIGHT);
-			fractalRenderer.calculateChunkSize();
+			fractalRenderer.setWidth(WIDTH);
 		});
 	}
 

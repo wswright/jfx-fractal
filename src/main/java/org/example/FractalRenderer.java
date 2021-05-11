@@ -72,8 +72,12 @@ public class FractalRenderer {
 
 		for(int y=0; y<DEFAULT_CHUNK_SIZE; y++) {
 			int curY = y + (yChunk*DEFAULT_CHUNK_SIZE);
+			if(curY == HEIGHT)
+				continue;
 			for (int x = 0; x < DEFAULT_CHUNK_SIZE; x++) {
 				int curX = x + (xChunk*DEFAULT_CHUNK_SIZE);
+				if(curX == WIDTH)
+					continue;
 				int i = ((curY * WIDTH) + curX) * 3;
 				imageData[i] = fractal.pixels[x][y].color[0];
 				imageData[i+1] = fractal.pixels[x][y].color[1];
@@ -150,5 +154,15 @@ public class FractalRenderer {
 		System.gc();
 		System.runFinalization();
 		System.out.println("+------------------------------------------------------------------------------------------+");
+	}
+
+	public void setWidth(int width) {
+		WIDTH = width;
+		calculateChunkSize();
+	}
+
+	public void setHeight(int height) {
+		HEIGHT = height;
+		calculateChunkSize();
 	}
 }
