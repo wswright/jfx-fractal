@@ -13,8 +13,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class App extends Application {
 	private static final double PAN_AMOUNT = 0.05;
-	public static int WIDTH = 640*2;
-	public static int HEIGHT = 480*2;
 	public static double X_LOWER = -2.5;
 	public static double X_UPPER = 1.0555555;
 	public static double Y_LOWER = -1;
@@ -36,10 +34,7 @@ public class App extends Application {
 	@Override
 	public void start(Stage stage) {
 		theStage = stage;
-
-		this.canvas = new Canvas(WIDTH, HEIGHT);
-		FractalRenderer.WIDTH = WIDTH;
-		FractalRenderer.HEIGHT = HEIGHT;
+		this.canvas = new Canvas(FractalRenderer.WIDTH, FractalRenderer.HEIGHT);
 		fractalRenderer.setCanvas(canvas);
 		final Button btnGo = new Button("GO!");
 		btnGo.setOnAction(event -> {
@@ -52,14 +47,14 @@ public class App extends Application {
 		stage.addEventHandler(KeyEvent.KEY_PRESSED, getKeyPressedEventHandler());
 		stage.show();
 		stage.widthProperty().addListener((observable, oldValue, newValue) -> {
-			WIDTH = newValue.intValue();
-			canvas.setWidth(WIDTH);
-			fractalRenderer.setWidth(WIDTH);
+			final int width = newValue.intValue();
+			canvas.setWidth(width);
+			fractalRenderer.setWidth(width);
 		});
 		stage.heightProperty().addListener((observable, oldValue, newValue) -> {
-			HEIGHT = newValue.intValue();
-			canvas.setHeight(HEIGHT);
-			fractalRenderer.setWidth(WIDTH);
+			final int height = newValue.intValue();
+			canvas.setHeight(height);
+			fractalRenderer.setHeight(height);
 		});
 	}
 

@@ -29,8 +29,7 @@ public class FractalRenderer {
 	private byte[] imageData = new byte[0];
 
 	public FractalRenderer() {
-		imageData = new byte[WIDTH*HEIGHT*3];
-		calculateChunkSize();
+		initializeImageData();
 	}
 
 	public void calculateChunkSize() {
@@ -72,11 +71,11 @@ public class FractalRenderer {
 
 		for(int y=0; y<DEFAULT_CHUNK_SIZE; y++) {
 			int curY = y + (yChunk*DEFAULT_CHUNK_SIZE);
-			if(curY == HEIGHT)
+			if(curY >= HEIGHT)
 				continue;
 			for (int x = 0; x < DEFAULT_CHUNK_SIZE; x++) {
 				int curX = x + (xChunk*DEFAULT_CHUNK_SIZE);
-				if(curX == WIDTH)
+				if(curX >= WIDTH)
 					continue;
 				int i = ((curY * WIDTH) + curX) * 3;
 				imageData[i] = fractal.pixels[x][y].color[0];
@@ -94,15 +93,11 @@ public class FractalRenderer {
 
 		App.setTitleText(String.format("Initializing...[W: %d][H: %d][X: %f-%f][Y: %f-%f]", WIDTH, HEIGHT, X_LOWER, X_UPPER, Y_LOWER, Y_UPPER));
 
-		imageData = new byte[WIDTH*HEIGHT*3];
+		initializeImageData();
 		Fractal.totalIters = new AtomicLong(0);
 		final PixelWriter pw = canvas.getGraphicsContext2D().getPixelWriter();
 		PixelFormat<ByteBuffer> pixelFormat = PixelFormat.getByteRgbInstance();
-		IntStream.range(0, Y_CHUNKS).parallel().forEach(ychunk -> {
-			IntStream.range(0, X_CHUNKS).parallel().forEach(xchunk -> {
-				renderChunk(xchunk, ychunk);
-			});
-		});
+		IntStream.range(0, Y_CHUNKS).parallel().forEach(ychunk -> IntStream.range(0, X_CHUNKS).parallel().forEach(xchunk -> renderChunk(xchunk, ychunk)));
 //		Fractal fractal = new Fractal(WIDTH, HEIGHT, X_LOWER, X_UPPER, Y_LOWER, Y_UPPER);
 		CENTER_X = (X_LOWER + X_UPPER) / 2.0;
 		CENTER_Y = (Y_LOWER + Y_UPPER) / 2.0;
@@ -156,13 +151,20 @@ public class FractalRenderer {
 		System.out.println("+------------------------------------------------------------------------------------------+");
 	}
 
+	private void initializeImageData() {
+		if(imageData == null || imageData.length != WIDTH*HEIGHT*3)
+			imageData = new byte[WIDTH*HEIGHT*3];
+		calculateChunkSize();
+	}
+
 	public void setWidth(int width) {
 		WIDTH = width;
-		calculateChunkSize();
+		initializeImageData();
+
 	}
 
 	public void setHeight(int height) {
 		HEIGHT = height;
-		calculateChunkSize();
+		initializeImageData();
 	}
 }
