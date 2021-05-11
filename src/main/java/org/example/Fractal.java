@@ -25,7 +25,7 @@ public class Fractal {
 	public double Y_UPPER;
 	public double centerX, centerY = 0;
 	public static final int MAX_ITERATIONS = 40;
-	public static final int ESCAPE_LIMIT = 500;
+	public static final int ESCAPE_LIMIT = 100;
 	public static AtomicLong totalIters = new AtomicLong(0);
 	public int chunkXOffset = 0;
 	public int chunkYOffset = 0;

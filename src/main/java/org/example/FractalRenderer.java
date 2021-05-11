@@ -5,7 +5,6 @@ import javafx.scene.image.PixelFormat;
 import javafx.scene.image.PixelWriter;
 
 import java.nio.ByteBuffer;
-import java.time.Duration;
 import java.time.Instant;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
@@ -39,8 +38,8 @@ public class FractalRenderer {
 			X_CHUNKS++;
 		if(Y_CHUNKS*DEFAULT_CHUNK_SIZE < HEIGHT)
 			Y_CHUNKS++;
-		System.out.println("X_CHUNKS: " + X_CHUNKS);
-		System.out.println("Y_CHUNKS: " + Y_CHUNKS);
+//		System.out.println("X_CHUNKS: " + X_CHUNKS);
+//		System.out.println("Y_CHUNKS: " + Y_CHUNKS);
 	}
 
 	void panFractal(double panX, double panY) {
@@ -53,7 +52,7 @@ public class FractalRenderer {
 		Y_UPPER += yOffset;
 		CENTER_X = (X_LOWER + X_UPPER) / 2.0;
 		CENTER_Y = (Y_LOWER + Y_UPPER) / 2.0;
-		System.out.printf("Panning! [X: %f-%f][Y: %f-%f]%n", X_LOWER, X_UPPER, Y_LOWER, Y_UPPER);
+//		System.out.printf("Panning! [X: %f-%f][Y: %f-%f]%n", X_LOWER, X_UPPER, Y_LOWER, Y_UPPER);
 		renderFractal();
 	}
 
@@ -89,7 +88,7 @@ public class FractalRenderer {
 	void renderFractal() {
 		Instant veryStart = Instant.now();
 		Instant start = Instant.now();
-		System.out.printf("Initializing...[W: %d][H: %d][X: %f-%f][Y: %f-%f]", WIDTH, HEIGHT, X_LOWER, X_UPPER, Y_LOWER, Y_UPPER);
+//		System.out.printf("Initializing...[W: %d][H: %d][X: %f-%f][Y: %f-%f]", WIDTH, HEIGHT, X_LOWER, X_UPPER, Y_LOWER, Y_UPPER);
 
 		App.setTitleText(String.format("Initializing...[W: %d][H: %d][X: %f-%f][Y: %f-%f]", WIDTH, HEIGHT, X_LOWER, X_UPPER, Y_LOWER, Y_UPPER));
 
@@ -101,24 +100,24 @@ public class FractalRenderer {
 //		Fractal fractal = new Fractal(WIDTH, HEIGHT, X_LOWER, X_UPPER, Y_LOWER, Y_UPPER);
 		CENTER_X = (X_LOWER + X_UPPER) / 2.0;
 		CENTER_Y = (Y_LOWER + Y_UPPER) / 2.0;
-		System.out.printf("[%dms]%n", Duration.between(start, Instant.now()).toMillis());
+//		System.out.printf("[%dms]%n", Duration.between(start, Instant.now()).toMillis());
 		start = Instant.now();
-		System.out.printf("Calculating...[Threads: %d][Escape: %d][MaxIterations: %d]", Runtime.getRuntime().availableProcessors(), Fractal.ESCAPE_LIMIT, Fractal.MAX_ITERATIONS);
+//		System.out.printf("Calculating...[Threads: %d][Escape: %d][MaxIterations: %d]", Runtime.getRuntime().availableProcessors(), Fractal.ESCAPE_LIMIT, Fractal.MAX_ITERATIONS);
 		App.setTitleText(String.format("Calculating...[Threads: %d]", Runtime.getRuntime().availableProcessors()));
 
 //		fractal.calculate();
 
 		int i=0;
-		System.out.printf("[%dms]%n", Duration.between(start, Instant.now()).toMillis());
+//		System.out.printf("[%dms]%n", Duration.between(start, Instant.now()).toMillis());
 		start = Instant.now();
-		System.out.println("Calculating Histogram...");
+//		System.out.println("Calculating Histogram...");
 		App.setTitleText("Calculating Histogram...");
 //		final Map<Long, Long> iterationsHistogram = fractal.getIterations();
 //		System.out.printf("\t[Entries: %d][%dms]%n", iterationsHistogram.size(), Duration.between(start, Instant.now()).toMillis());
 
 
 		start = Instant.now();
-		System.out.print("Buffering...");
+//		System.out.print("Buffering...");
 		App.setTitleText("Buffering...");
 
 //		imageData = fractal.getImageData(imageData);
@@ -131,24 +130,24 @@ public class FractalRenderer {
 //				i+=3;
 //			}
 //		}
-		System.out.printf("[%dms]%n", Duration.between(start, Instant.now()).toMillis());
+//		System.out.printf("[%dms]%n", Duration.between(start, Instant.now()).toMillis());
 		start = Instant.now();
-		System.out.print("Rendering...");
+//		System.out.print("Rendering...");
 		App.setTitleText("Rendering...");
 
 
 		pw.setPixels(0, 0, WIDTH, HEIGHT, pixelFormat, imageData, 0, WIDTH*3);
-		System.out.printf("[%dms]%n", Duration.between(start, Instant.now()).toMillis());
-		System.out.println("Total Iterations: " + Fractal.totalIters.get());
-		System.out.println("Iters/Pixel: " + Fractal.totalIters.get() / (1.0f*WIDTH * HEIGHT));
+//		System.out.printf("[%dms]%n", Duration.between(start, Instant.now()).toMillis());
+//		System.out.println("Total Iterations: " + Fractal.totalIters.get());
+//		System.out.println("Iters/Pixel: " + Fractal.totalIters.get() / (1.0f*WIDTH * HEIGHT));
 		App.setTitleText("Total Iterations: " + Fractal.totalIters.get());
-		System.out.printf("Total Duration: [%dms]%n", Duration.between(veryStart, Instant.now()).toMillis());
+//		System.out.printf("Total Duration: [%dms]%n", Duration.between(veryStart, Instant.now()).toMillis());
 //		fractal = null;
 
 		//Only Hints, nothing more
 		System.gc();
 		System.runFinalization();
-		System.out.println("+------------------------------------------------------------------------------------------+");
+//		System.out.println("+------------------------------------------------------------------------------------------+");
 	}
 
 	private void initializeImageData() {
