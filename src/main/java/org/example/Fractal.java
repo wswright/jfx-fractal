@@ -1,6 +1,5 @@
 package org.example;
 
-import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Map;
@@ -25,9 +24,11 @@ public class Fractal {
 	public double Y_LOWER;
 	public double Y_UPPER;
 	public double centerX, centerY = 0;
-	public static final int MAX_ITERATIONS = 64;
-	public static final int ESCAPE_LIMIT = 10000;
+	public static final int MAX_ITERATIONS = 64*64;
+	public static final int ESCAPE_LIMIT = 1000000;
 	public static AtomicLong totalIters = new AtomicLong(0);
+	public int chunkXOffset = 0;
+	public int chunkYOffset = 0;
 
 	public Fractal(int width, int height, double xLower, double xUpper, double yLower, double yUpper) {
 		this.width = width;
@@ -50,6 +51,30 @@ public class Fractal {
 		this(width,height, App.X_LOWER, App.X_UPPER, App.Y_LOWER, App.Y_UPPER);
 	}
 
+	public static Fractal fromChunk(int xChunk, int yChunk, int x_chunks, int y_chunks, int defaultChunkSize, int width, int height, double xLower, double xUpper, double yLower, double yUpper) {
+		//Calculate X and Y remainder if this is the last chunk, meaning it might not be a full chunk
+		int xRemainder = defaultChunkSize, yRemainder = defaultChunkSize;
+		if(xChunk+1 == x_chunks) {
+			xRemainder = width % defaultChunkSize;
+			if(xRemainder==0)
+				xRemainder = defaultChunkSize;
+		}
+		if(yChunk+1 == y_chunks) {
+			yRemainder = height % defaultChunkSize;
+			if(yRemainder==0)
+				yRemainder = defaultChunkSize;
+		}
+
+		double xDiff = (xUpper-xLower) / (double)x_chunks;
+		double yDiff = (yUpper-yLower) / (double)y_chunks;
+		double calcXLower = xDiff * (double)xChunk + xLower;
+		double calcYLower = yDiff * (double)yChunk + yLower;
+		final Fractal fractal = new Fractal(xRemainder, yRemainder, calcXLower, calcXLower + xDiff, calcYLower, calcYLower + yDiff);
+		fractal.chunkXOffset = (xChunk) * defaultChunkSize;
+		fractal.chunkYOffset = (yChunk) * defaultChunkSize;
+		return fractal;
+	}
+
 	private byte[] getRandomColor() {
 		final byte[] bytes = new byte[3];
 		randomSource.nextBytes(bytes);
@@ -65,7 +90,7 @@ public class Fractal {
 				.collect(Collectors.toList())).flatMap(ppp -> Stream.concat(ppp.stream().parallel().distinct(), colors.keySet().parallelStream())).collect(Collectors.toSet());
 		collectedIterations.forEach(i -> iterations.put(i, 0L));
 
-		System.out.println("\tZero HashMap: " + Duration.between(start, Instant.now()).toMillis() + "ms");
+//		System.out.println("\tZero HashMap: " + Duration.between(start, Instant.now()).toMillis() + "ms");
 		start = Instant.now();
 
 		IntStream.range(0,height).parallel().forEach(y -> {
@@ -74,11 +99,11 @@ public class Fractal {
 			});
 		});
 
-		System.out.println("\tPopulate HashMap: " + Duration.between(start, Instant.now()).toMillis() + "ms");
+//		System.out.println("\tPopulate HashMap: " + Duration.between(start, Instant.now()).toMillis() + "ms");
 		start = Instant.now();
 		iterations.keySet().parallelStream().forEach(i -> colors.putIfAbsent(i, getRandomColor()));
 
-		System.out.println("\tGenerate & Store Colors: " + Duration.between(start, Instant.now()).toMillis() + "ms");
+//		System.out.println("\tGenerate & Store Colors: " + Duration.between(start, Instant.now()).toMillis() + "ms");
 		start = Instant.now();
 
 		IntStream.range(0,height).parallel().forEach(y -> {
@@ -87,8 +112,8 @@ public class Fractal {
 			});
 		});
 
-		System.out.println("\tAssign Colors to pixels: " + Duration.between(start, Instant.now()).toMillis() + "ms");
-		System.out.println("\tTOTAL TIME: " + Duration.between(very_start, Instant.now()).toMillis() + "ms");
+//		System.out.println("\tAssign Colors to pixels: " + Duration.between(start, Instant.now()).toMillis() + "ms");
+//		System.out.println("\tTOTAL TIME: " + Duration.between(very_start, Instant.now()).toMillis() + "ms");
 		return iterations;
 	}
 
@@ -114,6 +139,7 @@ public class Fractal {
 	}
 
 	public void calculate() {
+//		System.out.printf("<<Calculating Fractal>> [%d x %d]%n", width, height);
 		pixelsCalculated.set(0);
 		IntStream.range(0, height).parallel().forEach(y -> {
 			IntStream.range(0, width).parallel().forEach(x -> {
