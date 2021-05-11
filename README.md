@@ -2,11 +2,11 @@
 Java FX Fractal Generator
 
 ## Features
- - ###Panning (w,a,s,d)
- - ###Zooming (scroll-wheel)
- - ###Color Shading
- - ###Resizable
- - ###Multi-Threaded
+ - ### Panning (w,a,s,d)
+ - ### Zooming (scroll-wheel)
+ - ### Color Shading
+ - ### Resizable
+ - ### Multi-Threaded
 
 ### Project JVM Flags
  - See https://github.com/controlsfx/controlsfx/wiki/Using-ControlsFX-with-JDK-9-and-above
