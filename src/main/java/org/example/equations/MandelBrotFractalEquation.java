@@ -1,5 +1,6 @@
-package org.example;
+package org.example.equations;
 
+import org.example.Complex;
 import org.jetbrains.annotations.NotNull;
 
 public class MandelBrotFractalEquation implements IFractalEquation {

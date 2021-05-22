@@ -61,10 +61,10 @@ public class App extends Application {
 	private EventHandler<KeyEvent> getKeyPressedEventHandler() {
 		return event -> {
 			switch (event.getCode()) {
-				case W -> fractalRenderer.panFractal(0, -PAN_AMOUNT);
-				case S -> fractalRenderer.panFractal(0, PAN_AMOUNT);
-				case A -> fractalRenderer.panFractal(-PAN_AMOUNT, 0);
-				case D -> fractalRenderer.panFractal(PAN_AMOUNT, 0);
+				case W -> fractalRenderer.panFractalByPercentage(0, -PAN_AMOUNT);
+				case S -> fractalRenderer.panFractalByPercentage(0, PAN_AMOUNT);
+				case A -> fractalRenderer.panFractalByPercentage(-PAN_AMOUNT, 0);
+				case D -> fractalRenderer.panFractalByPercentage(PAN_AMOUNT, 0);
 				default -> {}
 			}
 		};

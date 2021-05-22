@@ -4,4 +4,5 @@ module org.example {
     requires org.jetbrains.annotations;
     exports org.example;
     opens org.example.fxui to javafx.base;
+    exports org.example.equations;
 }

@@ -1,5 +1,8 @@
 package org.example;
 
+import org.example.equations.IFractalEquation;
+import org.example.equations.MandelBrotFractalEquation;
+
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Map;
@@ -156,7 +159,16 @@ public class Fractal {
 		pixelsCalculated.incrementAndGet();
 	}
 
-	private static double linmap(double val, double lower1, double upper1, double lower2, double upper2) {
+	/**
+	 * Maps a value from one number range (number-range-1) to another (number-range-2).
+	 * @param val The value to map from number-range-1 to number-range-2. Example: 0.2
+	 * @param lower1 The lowest value in number-range-1. Example: 0
+	 * @param upper1 The highest value in number-range-1. Example: 1
+	 * @param lower2 The lowest value in number-range-2. Example: 0
+	 * @param upper2 The highest value in number-range-2. Example: 10
+	 * @return Returns val converted from number-range-1 to number-range-2. Example: 2 (Because 0.2 * 10)
+	 */
+	public static double linmap(double val, double lower1, double upper1, double lower2, double upper2) {
 		return ((val - lower1) / (upper1 - lower1)) * (upper2 - lower2) + lower2;
 	}
 
