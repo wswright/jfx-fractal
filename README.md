@@ -2,6 +2,7 @@
 Java FX Fractal Generator
 
 ## Features
+ - ### Click-to-Center (left-click in order to center the viewport on the left-clicked part of the fractal)
  - ### Panning (w,a,s,d)
  - ### Zooming (scroll-wheel)
  - ### Color Shading
