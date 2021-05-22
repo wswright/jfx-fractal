@@ -2,8 +2,10 @@ package org.example;
 
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
+import org.example.equations.IFractalEquation;
 
 public interface IFractalRenderer {
+	void setEquation(IFractalEquation equation);
 	void panFractalToPoint(Point2D p);
 
 	void panFractalByPercentage(double panX, double panY);

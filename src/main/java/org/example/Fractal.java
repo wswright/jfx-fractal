@@ -20,7 +20,7 @@ public class Fractal {
 	public int width;
 	public int height;
 	public AtomicLong pixelsCalculated = new AtomicLong(0);
-	public IFractalEquation currentEquation = new MandelBrotFractalEquation();
+	public static IFractalEquation currentEquation = new MandelBrotFractalEquation();
 	Random randomSource = new Random();
 	public double X_LOWER;
 	public double X_UPPER;

@@ -8,7 +8,10 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.example.equations.MandelBrotFractalEquation;
+import org.example.equations.openaiequations.SierpinskiTriangleOfOrder4;
 import org.jetbrains.annotations.NotNull;
 
 public class App extends Application {
@@ -41,7 +44,16 @@ public class App extends Application {
 			System.out.println("GOING!");
 			fractalRenderer.renderFractal();
 		});
-		var scene = new Scene(new Group(canvas, btnGo));
+
+		final Button triangle = new Button("TRIANGLE");
+		triangle.setOnAction(event -> {
+			fractalRenderer.setEquation(new SierpinskiTriangleOfOrder4());
+		});
+		final Button mandelbrot = new Button("mandelbrot");
+		mandelbrot.setOnAction(event -> {
+			fractalRenderer.setEquation(new MandelBrotFractalEquation());
+		});
+		var scene = new Scene(new Group(canvas, new VBox(btnGo, mandelbrot, triangle)));
 		stage.setScene(scene);
 		stage.addEventHandler(ScrollEvent.SCROLL, getScrollEventEventHandler());
 		stage.addEventHandler(KeyEvent.KEY_PRESSED, getKeyPressedEventHandler());

@@ -9,6 +9,8 @@ Java FX Fractal Generator
  - ### Resizable
  - ### Multi-Threaded
 
+The names of the fractal classes are really terribly wrong. I aim to clean that up soon. I'm just playing around for now.
+
 ### Project JVM Flags
  - See https://github.com/controlsfx/controlsfx/wiki/Using-ControlsFX-with-JDK-9-and-above
    

@@ -4,6 +4,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.image.PixelFormat;
 import javafx.scene.image.PixelWriter;
+import org.example.equations.IFractalEquation;
 
 import java.nio.ByteBuffer;
 import java.time.Duration;
@@ -43,6 +44,12 @@ public class FractalRenderer implements IFractalRenderer {
 			Y_CHUNKS++;
 //		System.out.println("X_CHUNKS: " + X_CHUNKS);
 //		System.out.println("Y_CHUNKS: " + Y_CHUNKS);
+	}
+
+	@Override
+	public void setEquation(IFractalEquation equation) {
+		Fractal.currentEquation = equation;
+		renderFractal();
 	}
 
 	@Override
