@@ -31,5 +31,6 @@ The following Maven command was used to generate the initial structure of this p
 -Dversion=1.0.0 \
 -Djavafx-version=15.0.1`
 
-### Latest Project Screenshot
+### Latest Project Screenshots
+- 05/22/2021 ![Screenshot](Capture2.PNG)
 - 05/08/2021 ![Screenshot](Capture.PNG)
