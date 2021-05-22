@@ -45,6 +45,7 @@ public class FractalRenderer implements IFractalRenderer {
 //		System.out.println("Y_CHUNKS: " + Y_CHUNKS);
 	}
 
+	@Override
 	public void panFractalToPoint(Point2D p) {
 		double xOffset = (X_UPPER - X_LOWER) / 2.0f;
 		double yOffset = (Y_UPPER - Y_LOWER) / 2.0f;

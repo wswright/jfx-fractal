@@ -142,7 +142,6 @@ public class Fractal {
 	}
 
 	public void calculate() {
-//		System.out.printf("<<Calculating Fractal>> [%d x %d]%n", width, height);
 		pixelsCalculated.set(0);
 		IntStream.range(0, height).parallel().forEach(y -> {
 			IntStream.range(0, width).parallel().forEach(x -> {
@@ -153,9 +152,9 @@ public class Fractal {
 
 	private void calculatePixel(int x, int y) {
 		pixels[x][y].iterations = iterations(linmap(x, 0, width, X_LOWER, X_UPPER), linmap(y, 0, height, Y_LOWER, Y_UPPER), MAX_ITERATIONS);
-		pixels[x][y].color[0] = (byte) (pixels[x][y].iterations % 255);
-		pixels[x][y].color[1] = (byte) (pixels[x][y].iterations % 255);
-		pixels[x][y].color[2] = (byte) (pixels[x][y].iterations % 255);
+		pixels[x][y].color[0] = (byte) pixels[x][y].iterations;
+		pixels[x][y].color[1] = (byte) pixels[x][y].iterations;
+		pixels[x][y].color[2] = (byte) pixels[x][y].iterations;
 		pixelsCalculated.incrementAndGet();
 	}
 
