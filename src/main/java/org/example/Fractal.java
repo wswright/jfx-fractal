@@ -141,13 +141,14 @@ public class Fractal {
 		return i;
 	}
 
-	public void calculate() {
+	public Fractal calculate() {
 		pixelsCalculated.set(0);
 		IntStream.range(0, height).parallel().forEach(y -> {
 			IntStream.range(0, width).parallel().forEach(x -> {
 				calculatePixel(x,y);
 			});
 		});
+		return this;
 	}
 
 	private void calculatePixel(int x, int y) {

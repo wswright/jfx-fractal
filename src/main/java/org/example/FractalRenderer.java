@@ -35,15 +35,17 @@ public class FractalRenderer implements IFractalRenderer {
 		initializeImageData();
 	}
 
-	public void calculateChunkSize() {
+	/**
+	 * Calculates the number of chunks needed for the current fractal. This is mostly a function of width, height, and
+	 * the default chunk size.
+	 */
+	public void initializeChunks() {
 		X_CHUNKS = (WIDTH - (WIDTH % DEFAULT_CHUNK_SIZE)) / DEFAULT_CHUNK_SIZE;
 		Y_CHUNKS = (HEIGHT - (HEIGHT % DEFAULT_CHUNK_SIZE)) / DEFAULT_CHUNK_SIZE;
 		if(X_CHUNKS*DEFAULT_CHUNK_SIZE < WIDTH)
 			X_CHUNKS++;
 		if(Y_CHUNKS*DEFAULT_CHUNK_SIZE < HEIGHT)
 			Y_CHUNKS++;
-//		System.out.println("X_CHUNKS: " + X_CHUNKS);
-//		System.out.println("Y_CHUNKS: " + Y_CHUNKS);
 	}
 
 	@Override
@@ -91,49 +93,54 @@ public class FractalRenderer implements IFractalRenderer {
 		});
 	}
 
+	/**
+	 * Converts scene coordinates (like from {@link javafx.scene.input.MouseEvent} for example) to fractal coordinates.
+	 * @param sceneX The Scene X coordinate (left is 0, right is width)
+	 * @param sceneY The Scene Y coordinate (top is 0, bottom is height)
+	 * @return Returns the fractal coordinates as a {@link Point2D}.
+	 */
 	private Point2D sceneCoordsToFractalCoords(double sceneX, double sceneY) {
 		return new Point2D(Fractal.linmap(sceneX, 0, canvas.getWidth(), X_LOWER, X_UPPER),Fractal.linmap(sceneY, 0, canvas.getHeight(), Y_LOWER, Y_UPPER));
 	}
 
+	/**
+	 * Renders a specific chunk based on the Chunk[X,Y] coordinates. Render data is stored in the imageData field.
+	 * @param xChunk The X chunk number. Must be less than X_CHUNKS.
+	 * @param yChunk The Y chunk number. Must be less than Y_CHUNKS
+	 */
 	private void renderChunk(int xChunk, int yChunk) {
-		Instant start = Instant.now();
-//		System.out.println(String.format("renderChunk::Rendering chunk [%d,%d] of [%d,%d] total.", xChunk, yChunk, X_CHUNKS, Y_CHUNKS));
+		assert(xChunk <= X_CHUNKS);
+		assert(yChunk <= Y_CHUNKS);
 		Fractal fractal = Fractal.fromChunk(xChunk, yChunk, X_CHUNKS, Y_CHUNKS, DEFAULT_CHUNK_SIZE, WIDTH, HEIGHT, X_LOWER, X_UPPER, Y_LOWER, Y_UPPER);
-		fractal.calculate();
-		fractal.getIterations();
-//		System.out.printf("renderChunk::\t[Entries: %d][%dms]%n", iterationsHistogram.size(), Duration.between(start, Instant.now()).toMillis());
-
+		fractal.calculate()
+			   .getIterations();
 		for(int y=0; y<DEFAULT_CHUNK_SIZE; y++) {
 			int curY = y + (yChunk*DEFAULT_CHUNK_SIZE);
 			if(curY >= HEIGHT)
-				continue;
+				break;
 			for (int x = 0; x < DEFAULT_CHUNK_SIZE; x++) {
 				int curX = x + (xChunk*DEFAULT_CHUNK_SIZE);
 				if(curX >= WIDTH)
-					continue;
+					break;
 				int i = ((curY * WIDTH) + curX) * 3;
 				imageData[i] = fractal.pixels[x][y].color[0];
 				imageData[i+1] = fractal.pixels[x][y].color[1];
 				imageData[i+2] = fractal.pixels[x][y].color[2];
 			}
 		}
-//		pw.setPixels((xChunk*DEFAULT_CHUNK_SIZE), (yChunk*DEFAULT_CHUNK_SIZE), DEFAULT_CHUNK_SIZE, DEFAULT_CHUNK_SIZE, pixelFormat, imageData, 0, WIDTH*3);
-		fractal = null;
 	}
 
 
 	@Override
 	public void renderFractal() {
 		Instant veryStart = Instant.now();
-		Instant start = Instant.now();
 		App.setTitleText(String.format("Initializing...[W: %d][H: %d][X: %f-%f][Y: %f-%f]", WIDTH, HEIGHT, X_LOWER, X_UPPER, Y_LOWER, Y_UPPER));
-
 		initializeImageData();
 		Fractal.totalIters = new AtomicLong(0);
-//		final PixelWriter pw = canvas.getGraphicsContext2D().getPixelWriter();
 		CENTER_X = (X_LOWER + X_UPPER) / 2.0;
 		CENTER_Y = (Y_LOWER + Y_UPPER) / 2.0;
-		pw = canvas.getGraphicsContext2D().getPixelWriter();
+		if(pw == null)
+			pw = canvas.getGraphicsContext2D().getPixelWriter();
 		pixelFormat = PixelFormat.getByteRgbInstance();
 		IntStream.range(0, Y_CHUNKS).parallel()
 				.forEach(ychunk -> {
@@ -143,35 +150,27 @@ public class FractalRenderer implements IFractalRenderer {
 
 		System.out.printf("Calculating...[Threads: %d][Escape: %d][MaxIterations: %d][Chunks: %d]", Runtime.getRuntime().availableProcessors(), Fractal.ESCAPE_LIMIT, Fractal.MAX_ITERATIONS, X_CHUNKS*Y_CHUNKS);
 		App.setTitleText(String.format("Calculating...[Threads: %d]", Runtime.getRuntime().availableProcessors()));
-		System.out.print("Rendering...");
 		App.setTitleText("Rendering...");
 
-
-//		pw.setPixels(0, 0, WIDTH, HEIGHT, pixelFormat, imageData, 0, WIDTH*3);
-//		System.out.printf("[%dms]%n", Duration.between(start, Instant.now()).toMillis());
-//		System.out.println("Total Iterations: " + Fractal.totalIters.get());
-//		System.out.println("Iters/Pixel: " + Fractal.totalIters.get() / (1.0f*WIDTH * HEIGHT));
 		App.setTitleText("Total Iterations: " + Fractal.totalIters.get());
 		System.out.printf("Total Duration: [%dms]%n", Duration.between(veryStart, Instant.now()).toMillis());
 
 		//Only Hints, nothing more
 //		System.gc();
 //		System.runFinalization();
-//		System.out.println("+------------------------------------------------------------------------------------------+");
 	}
 
 	@Override
 	public void initializeImageData() {
 		if (imageData == null || imageData.length != FractalRenderer.WIDTH * FractalRenderer.HEIGHT * 3)
 			imageData = new byte[FractalRenderer.WIDTH * FractalRenderer.HEIGHT * 3];
-		calculateChunkSize();
+		initializeChunks();
 	}
 
 	@Override
 	public void setWidth(int width) {
 		WIDTH = width;
 		initializeImageData();
-
 	}
 
 	@Override
