@@ -1,6 +1,8 @@
 # jfx-fractal
 Java FX Fractal Generator
 
+Uses JDK16 Records.
+
 ## Features
  - ### Click-to-Center (left-click in order to center the viewport on the left-clicked part of the fractal)
  - ### Panning (w,a,s,d)
@@ -10,15 +12,6 @@ Java FX Fractal Generator
  - ### Multi-Threaded
 
 The names of the fractal classes are really terribly wrong. I aim to clean that up soon. I'm just playing around for now.
-
-### Project JVM Flags
- - See https://github.com/controlsfx/controlsfx/wiki/Using-ControlsFX-with-JDK-9-and-above
-   
-In JDK 9 and later, in order to access any private field from a class, we need to open its package to the module trying to access it. In our case, package is javafx.scene.control.skin and the module trying to access it is org.controlsfx.controls. Adding the following as a JVM flag to the project should fix the exception:
- - `--add-opens=javafx.controls/javafx.scene.control.skin=org.controlsfx.controls`
-
-Module "org.controlsfx.controls" is replaced with "unnamed module @0x6ea6fae3". JDK refers everything on classpath to ALL-UNNAMED module. Therefore, to fix the exception we need to open the package to module "ALL-UNNAMED".
- - `--add-opens=javafx.controls/javafx.scene.control.skin=ALL-UNNAMED`
 
 ### Project Genesis
 The following Maven command was used to generate the initial structure of this project:
