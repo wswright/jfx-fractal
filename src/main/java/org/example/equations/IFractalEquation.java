@@ -1,6 +1,6 @@
 package org.example.equations;
 
-import org.example.Complex;
+import org.example.MyComplexClass;
 import org.jetbrains.annotations.NotNull;
 
 public interface IFractalEquation {
@@ -11,5 +11,6 @@ public interface IFractalEquation {
 	 * @return
 	 */
 	@NotNull
-	Complex calculateFractalIteration(Complex z, Complex c);
+	MyComplexClass calculateFractalIteration(MyComplexClass z, MyComplexClass c);
+	String getDisplayName();
 }

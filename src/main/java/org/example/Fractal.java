@@ -27,14 +27,15 @@ public class Fractal {
 	public double Y_LOWER;
 	public double Y_UPPER;
 	public double centerX, centerY = 0;
-	public static final int MAX_ITERATIONS = 40;
-	public static final int ESCAPE_LIMIT = 100;
+	public static final int MAX_ITERATIONS = 400;
+	public static final int ESCAPE_LIMIT = 100000;
 	public static AtomicLong totalIters = new AtomicLong(0);
 	public int chunkXOffset = 0;
 	public int chunkYOffset = 0;
 
 	public Fractal(int width, int height, double xLower, double xUpper, double yLower, double yUpper) {
 		this.width = width;
+
 		this.height = height;
 		this.X_LOWER = xLower;
 		this.X_UPPER = xUpper;
@@ -128,15 +129,13 @@ public class Fractal {
 	 * @return
 	 */
 	public int iterations(double cr, double ci, int max_it) {
-		Complex z = new Complex(0,0);
-		final Complex c = new Complex(cr, ci);
+		MyComplexClass z = new MyComplexClass(0,0);
+		final MyComplexClass c = new MyComplexClass(cr, ci);
 		int i=0;
-		for(; i<max_it; i++) {
-			z = currentEquation.calculateFractalIteration(z, c);
 
-			if(z.abs() > ESCAPE_LIMIT)
-				break;
-		}
+		while(i++<max_it && z.abs() < ESCAPE_LIMIT)
+			z = currentEquation.calculateFractalIteration(z,c);
+
 		totalIters.addAndGet(i);
 		return i;
 	}

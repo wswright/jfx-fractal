@@ -1,18 +1,29 @@
 package org.example;
 
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ClassInfo;
+import io.github.classgraph.ScanResult;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.example.equations.MandelBrotFractalEquation;
-import org.example.equations.openaiequations.SierpinskiTriangleOfOrder4;
+import javafx.util.Callback;
+import org.example.equations.IFractalEquation;
 import org.jetbrains.annotations.NotNull;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashSet;
+import java.util.Set;
 
 public class App extends Application {
 	private static final double PAN_AMOUNT = 0.05;
@@ -45,15 +56,45 @@ public class App extends Application {
 			fractalRenderer.renderFractal();
 		});
 
-		final Button triangle = new Button("TRIANGLE");
-		triangle.setOnAction(event -> {
-			fractalRenderer.setEquation(new SierpinskiTriangleOfOrder4());
+		final ScanResult scanResult = new ClassGraph().enableAllInfo().acceptPackages(IFractalEquation.class.getPackageName())
+				.scan();
+		Set<Class<? extends IFractalEquation>> classes = new HashSet<>();
+		for(ClassInfo classInfo : scanResult.getClassesImplementing(IFractalEquation.class.getName())) {
+			System.out.println(classInfo);
+			classes.add((Class<? extends IFractalEquation>) classInfo.loadClass());
+		}
+
+		ComboBox<Class<? extends IFractalEquation>> cmbEquations = new ComboBox<>();
+		cmbEquations.setItems(FXCollections.observableList(classes.stream().toList()));
+		final Callback<ListView<Class<? extends IFractalEquation>>, ListCell<Class<? extends IFractalEquation>>> factory = lv -> new ListCell<Class<? extends IFractalEquation>>() {
+			@Override
+			protected void updateItem(Class<? extends IFractalEquation> item, boolean empty) {
+				super.updateItem(item, empty);
+				if(item == null || empty)
+					return;
+				String displayName = "error";
+				try {
+					displayName = item.getDeclaredConstructor().newInstance().getDisplayName();
+				} catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+					e.printStackTrace();
+				}
+				setText(empty ? "" : displayName);
+			}
+		};
+		cmbEquations.setCellFactory(factory);
+		cmbEquations.setButtonCell(factory.call(null));
+		cmbEquations.setOnAction(e -> {
+			System.out.println("COMBO ON ACTION!: " + e.toString());
+			final Class<? extends IFractalEquation> value = cmbEquations.getValue();
+			try {
+				fractalRenderer.setEquation(value.getDeclaredConstructor().newInstance());
+				fractalRenderer.renderFractal();
+			} catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException noSuchMethodException) {
+				noSuchMethodException.printStackTrace();
+			}
 		});
-		final Button mandelbrot = new Button("mandelbrot");
-		mandelbrot.setOnAction(event -> {
-			fractalRenderer.setEquation(new MandelBrotFractalEquation());
-		});
-		var scene = new Scene(new Group(canvas, new VBox(btnGo, mandelbrot, triangle)));
+
+		var scene = new Scene(new Group(canvas, new VBox(btnGo, cmbEquations)));
 		stage.setScene(scene);
 		stage.addEventHandler(ScrollEvent.SCROLL, getScrollEventEventHandler());
 		stage.addEventHandler(KeyEvent.KEY_PRESSED, getKeyPressedEventHandler());
