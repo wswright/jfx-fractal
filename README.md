@@ -11,8 +11,7 @@ Uses JDK16 Records for performance, and thus requires JDK16 in order to compile 
  - ### Resizable
  - ### Multi-Threaded - Uses both chunking and multi-threading to render quickly.
  - ### Dynamic Class Loading
-   - Create your own classes extending `org.example.equations.IFractalEquation`, and JFX-Fractal will pick them up automatically.
-   - Your custom equation class must be in the `org.example.equations` package.
+   - Create your own modules providing `org.example.fractal.lib.IFractalEquation`, and JFX-Fractal will pick them up automatically. See the  [jfx-fractal-lib](https://github.com/wswright/jfx-fractal-lib) project for details.
  
 
 ### Project Genesis
