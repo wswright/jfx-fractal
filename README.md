@@ -2,6 +2,11 @@
 Java FX Fractal Generator
 
 Uses JDK16 Records for performance, and thus requires JDK16 in order to compile and run.
+## Sub-Projects:
+ - ### [jfx-fractal-lib](https://github.com/wswright/jfx-fractal-lib)
+   - Contains the service interface.
+ - ### [jfx-fractal-equations](https://github.com/wswright/jfx-fractal-equations)
+   - Contains all equations used for rendering.
 
 ## Features
  - ### Click-to-Center (left-click in order to center the viewport on the left-clicked part of the fractal)
