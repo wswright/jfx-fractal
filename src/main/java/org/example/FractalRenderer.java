@@ -26,7 +26,7 @@ public class FractalRenderer implements IFractalRenderer {
 	public double CENTER_Y;
 	public int X_CHUNKS = 0;
 	public int Y_CHUNKS = 0;
-	private static final int DEFAULT_CHUNK_SIZE = 128;//pixels
+	private static final int DEFAULT_CHUNK_SIZE = 64;//pixels
 	private byte[] imageData = new byte[0];
 	private PixelWriter pw;
 	private PixelFormat<ByteBuffer> pixelFormat;
@@ -154,10 +154,6 @@ public class FractalRenderer implements IFractalRenderer {
 
 		App.setTitleText("Total Iterations: " + Fractal.totalIters.get());
 		System.out.printf("Total Duration: [%dms]%n", Duration.between(veryStart, Instant.now()).toMillis());
-
-		//Only Hints, nothing more
-//		System.gc();
-//		System.runFinalization();
 	}
 
 	@Override
@@ -177,5 +173,15 @@ public class FractalRenderer implements IFractalRenderer {
 	public void setHeight(int height) {
 		HEIGHT = height;
 		initializeImageData();
+	}
+
+	@Override
+	public double getWidth() {
+		return X_UPPER-X_LOWER;
+	}
+
+	@Override
+	public double getHeight() {
+		return Y_UPPER-Y_LOWER;
 	}
 }

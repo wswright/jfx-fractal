@@ -3,16 +3,11 @@ package org.example;
 import org.example.equations.IFractalEquation;
 import org.example.equations.MandelBrotFractalEquation;
 
-import java.time.Instant;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 public class Fractal {
 	public static Map<Long, byte[]> colors = new ConcurrentHashMap<>();
@@ -27,8 +22,8 @@ public class Fractal {
 	public double Y_LOWER;
 	public double Y_UPPER;
 	public double centerX, centerY;
-	public static final int MAX_ITERATIONS = 100;
-	public static final int ESCAPE_LIMIT = 10000;
+	public static final int MAX_ITERATIONS = 60;
+	public static final int ESCAPE_LIMIT = 1024;
 	public static AtomicLong totalIters = new AtomicLong(0);
 	public int chunkXOffset = 0;
 	public int chunkYOffset = 0;
@@ -85,40 +80,16 @@ public class Fractal {
 		return bytes;
 	}
 
-	public Map<Long, Long> getIterations() {
-		Instant very_start = Instant.now();
-		Instant start = Instant.now();
+	public void getIterations() {
 		Map<Long, Long> iterations = new ConcurrentHashMap<>(16, 0.9f, 64);
-		final Set<Long> collectedIterations = Arrays.stream(pixels).parallel().map(p -> Arrays.stream(p).parallel().map(pp -> pp.iterations)
-				.distinct()
-				.collect(Collectors.toList())).flatMap(ppp -> Stream.concat(ppp.stream().parallel().distinct(), colors.keySet().parallelStream())).collect(Collectors.toSet());
-		collectedIterations.forEach(i -> iterations.put(i, 0L));
-
-//		System.out.println("\tZero HashMap: " + Duration.between(start, Instant.now()).toMillis() + "ms");
-		start = Instant.now();
-
-		IntStream.range(0,height).parallel().forEach(y -> {
-			IntStream.range(0, width).parallel().forEach(x -> {
-				iterations.put(pixels[x][y].iterations, iterations.get(pixels[x][y].iterations)+1L);
-			});
-		});
-
-//		System.out.println("\tPopulate HashMap: " + Duration.between(start, Instant.now()).toMillis() + "ms");
-		start = Instant.now();
-		iterations.keySet().parallelStream().forEach(i -> colors.putIfAbsent(i, getRandomColor()));
-
-//		System.out.println("\tGenerate & Store Colors: " + Duration.between(start, Instant.now()).toMillis() + "ms");
-		start = Instant.now();
-
-		IntStream.range(0,height).parallel().forEach(y -> {
-			IntStream.range(0, width).parallel().forEach(x -> {
+		IntStream.range(0,height).forEach(y -> IntStream.range(0, width).forEach(x -> iterations.merge(pixels[x][y].iterations, 1L, Long::sum)));
+		iterations.keySet().forEach(i -> colors.putIfAbsent(i, getRandomColor()));
+		IntStream.range(0,height).forEach(y -> {
+			IntStream.range(0, width).forEach(x -> {
 				pixels[x][y].color = colors.get(pixels[x][y].iterations);
 			});
 		});
-
-//		System.out.println("\tAssign Colors to pixels: " + Duration.between(start, Instant.now()).toMillis() + "ms");
-//		System.out.println("\tTOTAL TIME: " + Duration.between(very_start, Instant.now()).toMillis() + "ms");
-		return iterations;
+		return;
 	}
 
 	/**

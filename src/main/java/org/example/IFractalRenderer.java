@@ -19,4 +19,8 @@ public interface IFractalRenderer {
 	void setWidth(int width);
 
 	void setHeight(int height);
+
+	double getWidth();
+
+	double getHeight();
 }

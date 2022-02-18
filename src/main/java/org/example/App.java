@@ -128,8 +128,8 @@ public class App extends Application {
 		return event -> {
 			System.out.printf("Zooming... BEFORE - X: [%f, %f], Y: [%f, %f]%n", FractalRenderer.X_LOWER, FractalRenderer.X_UPPER, FractalRenderer.Y_LOWER, FractalRenderer.Y_UPPER);
 			double delta = event.getDeltaY();
-			double curWidth = FractalRenderer.X_UPPER - FractalRenderer.X_LOWER;
-			double curHeight = FractalRenderer.Y_UPPER - FractalRenderer.Y_LOWER;
+			double curWidth = fractalRenderer.getWidth();
+			double curHeight = fractalRenderer.getHeight();
 			double x_offset, y_offset;
 
 			if(delta > 0) {
