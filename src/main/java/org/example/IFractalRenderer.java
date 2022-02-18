@@ -2,7 +2,7 @@ package org.example;
 
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
-import org.example.equations.IFractalEquation;
+import org.example.fractal.lib.IFractalEquation;
 
 public interface IFractalRenderer {
 	void setEquation(IFractalEquation equation);

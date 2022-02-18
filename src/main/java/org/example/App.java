@@ -1,8 +1,5 @@
 package org.example;
 
-import io.github.classgraph.ClassGraph;
-import io.github.classgraph.ClassInfo;
-import io.github.classgraph.ScanResult;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
@@ -18,11 +15,12 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import org.example.equations.IFractalEquation;
+import org.example.fractal.lib.IFractalEquation;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.ServiceLoader;
 import java.util.Set;
 
 public class App extends Application {
@@ -47,6 +45,7 @@ public class App extends Application {
 
 	@Override
 	public void start(Stage stage) {
+		System.out.println("Starting up");
 		theStage = stage;
 		this.canvas = new Canvas(FractalRenderer.WIDTH, FractalRenderer.HEIGHT);
 		fractalRenderer.setCanvas(canvas);
@@ -56,42 +55,43 @@ public class App extends Application {
 			fractalRenderer.renderFractal();
 		});
 
-		final ScanResult scanResult = new ClassGraph().enableAllInfo().acceptPackages(IFractalEquation.class.getPackageName())
-				.scan();
-		Set<Class<? extends IFractalEquation>> classes = new HashSet<>();
-		for(ClassInfo classInfo : scanResult.getClassesImplementing(IFractalEquation.class.getName())) {
-			System.out.println(classInfo);
-			classes.add((Class<? extends IFractalEquation>) classInfo.loadClass());
+//		final ScanResult scanResult = new ClassGraph().enableAllInfo().acceptPackages(IFractalEquation.class.getPackageName())
+//				.scan();
+//		Set<Class<? extends IFractalEquation>> classes = new HashSet<>();
+//		for(ClassInfo classInfo : scanResult.getClassesImplementing(IFractalEquation.class.getName())) {
+//			System.out.println(classInfo);
+//			classes.add((Class<? extends IFractalEquation>) classInfo.loadClass());
+//		}
+		System.out.println("Looking for Equation Services...");
+		Set<IFractalEquation> loadedClasses = new HashSet<>();
+		Iterable<IFractalEquation> services = ServiceLoader.load(IFractalEquation.class);
+		final Iterator<IFractalEquation> iterator = services.iterator();
+		while(iterator.hasNext()) {
+			final IFractalEquation next = iterator.next();
+			System.out.println("Equation Service Found: " + next.getDisplayName());
+			loadedClasses.add(next);
 		}
+		System.out.printf("Found %d Equation Services.", loadedClasses.size());
 
-		ComboBox<Class<? extends IFractalEquation>> cmbEquations = new ComboBox<>();
-		cmbEquations.setItems(FXCollections.observableList(classes.stream().toList()));
-		final Callback<ListView<Class<? extends IFractalEquation>>, ListCell<Class<? extends IFractalEquation>>> factory = lv -> new ListCell<Class<? extends IFractalEquation>>() {
+
+		ComboBox<IFractalEquation> cmbEquations = new ComboBox<>();
+		cmbEquations.setItems(FXCollections.observableList(loadedClasses.stream().toList()));
+		final Callback<ListView<IFractalEquation>, ListCell<IFractalEquation>> factory = lv -> new ListCell<IFractalEquation>() {
 			@Override
-			protected void updateItem(Class<? extends IFractalEquation> item, boolean empty) {
+			protected void updateItem(IFractalEquation item, boolean empty) {
 				super.updateItem(item, empty);
 				if(item == null || empty)
 					return;
-				String displayName = "error";
-				try {
-					displayName = item.getDeclaredConstructor().newInstance().getDisplayName();
-				} catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-					e.printStackTrace();
-				}
-				setText(empty ? "" : displayName);
+				setText(item.getDisplayName());
 			}
 		};
 		cmbEquations.setCellFactory(factory);
 		cmbEquations.setButtonCell(factory.call(null));
 		cmbEquations.setOnAction(e -> {
 			System.out.println("COMBO ON ACTION!: " + e.toString());
-			final Class<? extends IFractalEquation> value = cmbEquations.getValue();
-			try {
-				fractalRenderer.setEquation(value.getDeclaredConstructor().newInstance());
-				fractalRenderer.renderFractal();
-			} catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException noSuchMethodException) {
-				noSuchMethodException.printStackTrace();
-			}
+			final IFractalEquation value = cmbEquations.getValue();
+			fractalRenderer.setEquation(value);
+			fractalRenderer.renderFractal();
 		});
 
 		var scene = new Scene(new Group(canvas, new VBox(btnGo, cmbEquations)));

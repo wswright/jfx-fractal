@@ -1,5 +1,7 @@
 package org.example;
 
+import org.example.fractal.lib.ComplexAlgebraicForm;
+
 public record ComplexTrigForm(double p, double theta){
 	public static ComplexTrigForm fromAlgebraicForm(ComplexAlgebraicForm complex) {
 		double _p = complex.abs();

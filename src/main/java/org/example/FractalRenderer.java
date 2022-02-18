@@ -4,7 +4,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.image.PixelFormat;
 import javafx.scene.image.PixelWriter;
-import org.example.equations.IFractalEquation;
+import org.example.fractal.lib.IFractalEquation;
 
 import java.nio.ByteBuffer;
 import java.time.Duration;

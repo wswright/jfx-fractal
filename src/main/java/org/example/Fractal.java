@@ -1,7 +1,8 @@
 package org.example;
 
-import org.example.equations.IFractalEquation;
-import org.example.equations.MandelBrotFractalEquation;
+import org.example.fractal.lib.ComplexAlgebraicForm;
+import org.example.fractal.lib.IFractalEquation;
+import org.example.fractal.equations.MandelBrotFractalEquation;
 
 import java.util.Map;
 import java.util.Random;
