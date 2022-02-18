@@ -1,16 +1,16 @@
 package org.example.equations;
 
-import org.example.MyComplexClass;
+import org.example.ComplexAlgebraicForm;
 import org.jetbrains.annotations.NotNull;
 
 public interface IFractalEquation {
 	/**
 	 * Calculate the number of iterations a point takes to leave a bound.
-	 * @param z
-	 * @param c
-	 * @return
+	 * @param z Real part
+	 * @param c Complex part
+	 * @return Returns a ComplexAlgebraicForm
 	 */
 	@NotNull
-	MyComplexClass calculateFractalIteration(MyComplexClass z, MyComplexClass c);
+	ComplexAlgebraicForm calculateFractalIteration(ComplexAlgebraicForm z, ComplexAlgebraicForm c);
 	String getDisplayName();
 }

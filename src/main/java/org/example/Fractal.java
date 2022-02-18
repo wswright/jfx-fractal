@@ -26,9 +26,9 @@ public class Fractal {
 	public double X_UPPER;
 	public double Y_LOWER;
 	public double Y_UPPER;
-	public double centerX, centerY = 0;
-	public static final int MAX_ITERATIONS = 400;
-	public static final int ESCAPE_LIMIT = 100000;
+	public double centerX, centerY;
+	public static final int MAX_ITERATIONS = 100;
+	public static final int ESCAPE_LIMIT = 10000;
 	public static AtomicLong totalIters = new AtomicLong(0);
 	public int chunkXOffset = 0;
 	public int chunkYOffset = 0;
@@ -123,14 +123,15 @@ public class Fractal {
 
 	/**
 	 * The main pixel calculation happens here.
-	 * @param cr
-	 * @param ci
-	 * @param max_it
-	 * @return
+	 * @param cr Real part
+	 * @param ci Imaginary Part
+	 * @param max_it Maximum Iterations
+	 * @return Returns the number of iterations it took to cross the threshold
 	 */
 	public int iterations(double cr, double ci, int max_it) {
-		MyComplexClass z = new MyComplexClass(0,0);
-		final MyComplexClass c = new MyComplexClass(cr, ci);
+		ComplexAlgebraicForm z = new ComplexAlgebraicForm(0,0);
+		final ComplexAlgebraicForm c = new ComplexAlgebraicForm(cr, ci);
+//		final ComplexTrigForm complexTrigForm = ComplexTrigForm.fromAlgebraicForm(c);
 		int i=0;
 
 		while(i++<max_it && z.abs() < ESCAPE_LIMIT)
