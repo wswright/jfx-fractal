@@ -37,3 +37,6 @@ Interested in contributing? Drop me a line @ cpress.scott@gmail.com, or send a p
 - 06/02/2021 ![Screenshot](DropDown.PNG)
 - 05/22/2021 ![Screenshot](Capture2.PNG)
 - 05/08/2021 ![Screenshot](Capture.PNG)
+
+### Design Diagrams
+- 02/18/2022 Class Layout ![Class Layout](img_1.png)
