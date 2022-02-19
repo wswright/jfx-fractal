@@ -1,8 +1,8 @@
-package org.example;
+package org.wswright;
 
-import org.example.fractal.lib.ComplexAlgebraicForm;
-import org.example.fractal.lib.IFractalEquation;
-import org.example.fractal.equations.MandelBrotFractalEquation;
+import org.wswright.fractal.lib.ComplexAlgebraicForm;
+import org.wswright.fractal.lib.IFractalEquation;
+import org.wswright.fractal.equations.MandelBrotFractalEquation;
 
 import java.util.Map;
 import java.util.Random;

@@ -5,7 +5,7 @@ module org.example {
     requires io.github.classgraph;
     requires org.example.fractal.lib;
     requires org.example.fractal.equations;
-    exports org.example;
-    opens org.example.fxui to javafx.base;
-    uses org.example.fractal.lib.IFractalEquation;
+    exports org.wswright;
+    opens org.wswright.fxui to javafx.base;
+    uses org.wswright.fractal.lib.IFractalEquation;
 }

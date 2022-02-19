@@ -1,4 +1,4 @@
-package org.example;
+package org.wswright;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -15,7 +15,7 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import org.example.fractal.lib.IFractalEquation;
+import org.wswright.fractal.lib.IFractalEquation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;

@@ -1,8 +1,8 @@
-package org.example;
+package org.wswright;
 
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
-import org.example.fractal.lib.IFractalEquation;
+import org.wswright.fractal.lib.IFractalEquation;
 
 public interface IFractalRenderer {
 	void setEquation(IFractalEquation equation);

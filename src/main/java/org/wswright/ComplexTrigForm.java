@@ -1,6 +1,6 @@
-package org.example;
+package org.wswright;
 
-import org.example.fractal.lib.ComplexAlgebraicForm;
+import org.wswright.fractal.lib.ComplexAlgebraicForm;
 
 public record ComplexTrigForm(double p, double theta){
 	public static ComplexTrigForm fromAlgebraicForm(ComplexAlgebraicForm complex) {

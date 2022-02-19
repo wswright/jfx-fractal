@@ -1,4 +1,4 @@
-package org.example.fxui;
+package org.wswright.fxui;
 
 import javafx.stage.Window;
 

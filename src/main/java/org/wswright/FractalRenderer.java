@@ -1,10 +1,10 @@
-package org.example;
+package org.wswright;
 
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.image.PixelFormat;
 import javafx.scene.image.PixelWriter;
-import org.example.fractal.lib.IFractalEquation;
+import org.wswright.fractal.lib.IFractalEquation;
 
 import java.nio.ByteBuffer;
 import java.time.Duration;
