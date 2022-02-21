@@ -51,6 +51,21 @@ public class Fractal {
 		this(width,height, App.X_LOWER, App.X_UPPER, App.Y_LOWER, App.Y_UPPER);
 	}
 
+	/**
+	 * Creates a fractal from a chunk of an existing fractal.
+	 * @param xChunk The chunk's index on the x-axis.
+	 * @param yChunk The chunk's index on the y-axis.
+	 * @param x_chunks The total number of chunks on the x-axis.
+	 * @param y_chunks The total number of chunks on the y-axis.
+	 * @param defaultChunkSize The default chunk size.
+	 * @param width The actual width of content of this chunk.
+	 * @param height The actual height of the content of this chunk.
+	 * @param xLower The lower bound on the x-axis.
+	 * @param xUpper The upper bound on the x-axis.
+	 * @param yLower The lower bound on the y-axis.
+	 * @param yUpper The upper bound on the y-axis.
+	 * @return
+	 */
 	public static Fractal fromChunk(int xChunk, int yChunk, int x_chunks, int y_chunks, int defaultChunkSize, int width, int height, double xLower, double xUpper, double yLower, double yUpper) {
 		//Calculate X and Y remainder if this is the last chunk, meaning it might not be a full chunk
 		int xRemainder = defaultChunkSize, yRemainder = defaultChunkSize;
@@ -90,7 +105,6 @@ public class Fractal {
 				pixels[x][y].color = colors.get(pixels[x][y].iterations);
 			});
 		});
-		return;
 	}
 
 	/**
@@ -103,7 +117,6 @@ public class Fractal {
 	public int iterations(double cr, double ci, int max_it) {
 		ComplexAlgebraicForm z = new ComplexAlgebraicForm(0,0);
 		final ComplexAlgebraicForm c = new ComplexAlgebraicForm(cr, ci);
-//		final ComplexTrigForm complexTrigForm = ComplexTrigForm.fromAlgebraicForm(c);
 		int i=0;
 
 		while(i++<max_it && z.abs() < ESCAPE_LIMIT)
