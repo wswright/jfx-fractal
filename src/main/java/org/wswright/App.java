@@ -126,25 +126,11 @@ public class App extends Application {
 	@NotNull
 	private EventHandler<ScrollEvent> getScrollEventEventHandler() {
 		return event -> {
-			System.out.printf("Zooming... BEFORE - X: [%f, %f], Y: [%f, %f]%n", FractalRenderer.X_LOWER, FractalRenderer.X_UPPER, FractalRenderer.Y_LOWER, FractalRenderer.Y_UPPER);
-			double delta = event.getDeltaY();
-			double curWidth = fractalRenderer.getWidth();
-			double curHeight = fractalRenderer.getHeight();
-			double x_offset, y_offset;
-
-			if(delta > 0) {
-				x_offset = (curWidth / FractalRenderer.SCROLL_ZOOM_FACTOR) / 2.0;
-				y_offset = (curHeight / FractalRenderer.SCROLL_ZOOM_FACTOR) / 2.0;
+			if(event.getDeltaY() > 0) {
+				fractalRenderer.zoomIn();
 			} else {
-				x_offset = (curWidth * FractalRenderer.SCROLL_ZOOM_FACTOR) / 2.0;
-				y_offset = (curHeight * FractalRenderer.SCROLL_ZOOM_FACTOR) / 2.0;
+				fractalRenderer.zoomOut();
 			}
-			FractalRenderer.X_LOWER = fractalRenderer.CENTER_X - x_offset;
-			FractalRenderer.X_UPPER = fractalRenderer.CENTER_X + x_offset;
-			FractalRenderer.Y_LOWER = fractalRenderer.CENTER_Y - y_offset;
-			FractalRenderer.Y_UPPER = fractalRenderer.CENTER_Y + y_offset;
-
-			System.out.printf("Zooming... AFTER - X: [%f, %f], Y: [%f, %f]%n", FractalRenderer.X_LOWER, FractalRenderer.X_UPPER, FractalRenderer.Y_LOWER, FractalRenderer.Y_UPPER);
 			fractalRenderer.renderFractal();
 		};
 	}

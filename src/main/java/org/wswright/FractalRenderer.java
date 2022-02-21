@@ -84,6 +84,34 @@ public class FractalRenderer implements IFractalRenderer {
 	}
 
 	@Override
+	public void zoomIn() {
+		final double x_offset = (this.getWidth() / FractalRenderer.SCROLL_ZOOM_FACTOR) / 2.0;
+		final double y_offset = (this.getHeight() / FractalRenderer.SCROLL_ZOOM_FACTOR) / 2.0;
+		zoomFractalViaOffset(x_offset, y_offset);
+	}
+
+	@Override
+	public void zoomOut() {
+		final double x_offset = (this.getWidth() * FractalRenderer.SCROLL_ZOOM_FACTOR) / 2.0;
+		final double y_offset = (this.getHeight() * FractalRenderer.SCROLL_ZOOM_FACTOR) / 2.0;
+		zoomFractalViaOffset(x_offset, y_offset);
+	}
+
+	/**
+	 * Sets the boundaries of the fractal using offsets from the center x and y coordinate. Does NOT render the fractal.
+	 * @param xOffset The distance from center to the x-edge of the new zoom boundaries.
+	 * @param yOffset The distance from center to the y-edge of the new zoom boundaries.
+	 */
+	public void zoomFractalViaOffset(double xOffset, double yOffset) {
+		System.out.printf("Zooming... BEFORE - X: [%f, %f], Y: [%f, %f]%n", X_LOWER, X_UPPER, Y_LOWER, Y_UPPER);
+		X_LOWER = this.CENTER_X - xOffset;
+		X_UPPER = this.CENTER_X + xOffset;
+		Y_LOWER = this.CENTER_Y - yOffset;
+		Y_UPPER = this.CENTER_Y + yOffset;
+		System.out.printf("Zooming... AFTER - X: [%f, %f], Y: [%f, %f]%n", X_LOWER, X_UPPER, Y_LOWER, Y_UPPER);
+	}
+
+	@Override
 	public void setCanvas(Canvas canvas) {
 		this.canvas = canvas;
 		canvas.setOnMouseClicked(event -> {

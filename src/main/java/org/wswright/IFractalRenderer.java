@@ -23,4 +23,8 @@ public interface IFractalRenderer {
 	double getWidth();
 
 	double getHeight();
+
+	void zoomIn();
+
+	void zoomOut();
 }
