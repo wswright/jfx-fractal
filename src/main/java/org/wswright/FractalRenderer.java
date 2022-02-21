@@ -40,13 +40,22 @@ public class FractalRenderer implements IFractalRenderer {
 	 * the default chunk size.
 	 */
 	public void initializeChunks() {
-		X_CHUNKS = (WIDTH - (WIDTH % DEFAULT_CHUNK_SIZE)) / DEFAULT_CHUNK_SIZE;
-		Y_CHUNKS = (HEIGHT - (HEIGHT % DEFAULT_CHUNK_SIZE)) / DEFAULT_CHUNK_SIZE;
-		if(X_CHUNKS*DEFAULT_CHUNK_SIZE < WIDTH)
-			X_CHUNKS++;
-		if(Y_CHUNKS*DEFAULT_CHUNK_SIZE < HEIGHT)
-			Y_CHUNKS++;
+		X_CHUNKS = calculateXChunkSize();
+		Y_CHUNKS = calculateYChunkSize();
 	}
+
+	private int calculateXChunkSize() {
+		final int x = (WIDTH - (WIDTH % DEFAULT_CHUNK_SIZE)) / DEFAULT_CHUNK_SIZE;
+		assert x >= 0;
+		return (x * DEFAULT_CHUNK_SIZE < WIDTH) ? x + 1 : x;
+	}
+
+	private int calculateYChunkSize() {
+		final int y = (HEIGHT - (HEIGHT % DEFAULT_CHUNK_SIZE)) / DEFAULT_CHUNK_SIZE;
+		assert y >= 0;
+		return (y * DEFAULT_CHUNK_SIZE < HEIGHT) ? y + 1 : y;
+	}
+
 
 	@Override
 	public void setEquation(IFractalEquation equation) {
@@ -64,7 +73,7 @@ public class FractalRenderer implements IFractalRenderer {
 		X_UPPER = CENTER_X + xOffset;
 		Y_LOWER = CENTER_Y - yOffset;
 		Y_UPPER = CENTER_Y + yOffset;
-		System.out.printf("Panning! [X: %f-%f][Y: %f-%f]%n", X_LOWER, X_UPPER, Y_LOWER, Y_UPPER);
+		System.out.printf("Panning! [X: %f to %f][Y: %f to %f]%n", X_LOWER, X_UPPER, Y_LOWER, Y_UPPER);
 		renderFractal();
 	}
 
@@ -79,7 +88,7 @@ public class FractalRenderer implements IFractalRenderer {
 		Y_UPPER += yOffset;
 		CENTER_X = (X_LOWER + X_UPPER) / 2.0;
 		CENTER_Y = (Y_LOWER + Y_UPPER) / 2.0;
-		System.out.printf("Panning! [X: %f-%f][Y: %f-%f]%n", X_LOWER, X_UPPER, Y_LOWER, Y_UPPER);
+		System.out.printf("Panning! New bounds: [X: %f to %f][Y: %f to %f]%n", X_LOWER, X_UPPER, Y_LOWER, Y_UPPER);
 		renderFractal();
 	}
 
@@ -103,12 +112,12 @@ public class FractalRenderer implements IFractalRenderer {
 	 * @param yOffset The distance from center to the y-edge of the new zoom boundaries.
 	 */
 	public void zoomFractalViaOffset(double xOffset, double yOffset) {
-		System.out.printf("Zooming... BEFORE - X: [%f, %f], Y: [%f, %f]%n", X_LOWER, X_UPPER, Y_LOWER, Y_UPPER);
+//		System.out.printf("Zooming... BEFORE - X: [%f, %f], Y: [%f, %f]%n", X_LOWER, X_UPPER, Y_LOWER, Y_UPPER);
 		X_LOWER = this.CENTER_X - xOffset;
 		X_UPPER = this.CENTER_X + xOffset;
 		Y_LOWER = this.CENTER_Y - yOffset;
 		Y_UPPER = this.CENTER_Y + yOffset;
-		System.out.printf("Zooming... AFTER - X: [%f, %f], Y: [%f, %f]%n", X_LOWER, X_UPPER, Y_LOWER, Y_UPPER);
+//		System.out.printf("Zooming... AFTER - X: [%f, %f], Y: [%f, %f]%n", X_LOWER, X_UPPER, Y_LOWER, Y_UPPER);
 	}
 
 	@Override
@@ -170,10 +179,7 @@ public class FractalRenderer implements IFractalRenderer {
 		if(pw == null)
 			pw = canvas.getGraphicsContext2D().getPixelWriter();
 		pixelFormat = PixelFormat.getByteRgbInstance();
-		IntStream.range(0, Y_CHUNKS).parallel()
-				.forEach(ychunk -> {
-					IntStream.range(0, X_CHUNKS).parallel().forEach(xchunk -> renderChunk(xchunk, ychunk));
-				});
+		IntStream.range(0, Y_CHUNKS).parallel().forEach(ychunk -> IntStream.range(0, X_CHUNKS).forEach(xchunk -> renderChunk(xchunk, ychunk)));
 		pw.setPixels(0, 0, WIDTH, HEIGHT, pixelFormat, imageData, 0, WIDTH*3);
 
 		System.out.printf("Calculating...[Threads: %d][Escape: %d][MaxIterations: %d][Chunks: %d]", Runtime.getRuntime().availableProcessors(), Fractal.ESCAPE_LIMIT, Fractal.MAX_ITERATIONS, X_CHUNKS*Y_CHUNKS);
